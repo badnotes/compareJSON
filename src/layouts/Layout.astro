@@ -1,13 +1,21 @@
+---
+import "../styles/global.css"
+---
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="一个强大的JSON比较工具，帮助您快速找出两个JSON文件之间的差异。">
+		<meta name="keywords" content="JSON, 比较工具, JSON比较, 差异检测, 开发工具">
+		<title>JSON比较工具 | 快速找出JSON文件差异</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+		
 	</head>
-	<body>
+	<body class="bg-gray-50 flex flex-col min-h-screen">
 		<slot />
 	</body>
 </html>

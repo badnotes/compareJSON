@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #3b82f6;
+    --color-secondary: #10b981;
+    --color-dark: #1e293b;
+    --color-light: #f8fafc;
+}
+
+.json-key {
+    color: #7c3aed;
+    font-weight: 600;
+}
+.json-value {
+    color: #0f766e;
+}
+.json-string {
+    color: #0f766e;
+}
+.json-number {
+    color: #c2410c;
+}
+.json-boolean {
+    color: #7e22ce;
+}
+.json-null {
+    color: #9ca3af;
+}
+.diff-added {
+    background-color: rgba(16, 185, 129, 0.15);
+    border-left: 3px solid #10b981;
+}
+.diff-removed {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-left: 3px solid #ef4444;
+}
+.diff-changed {
+    background-color: rgba(245, 158, 11, 0.15);
+    border-left: 3px solid #f59e0b;
+}
+.diff-unchanged {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-left: 3px solid #3b82f6;
+}
+.result-tab {
+    transition: all 0.3s ease;
+}
+.result-tab.active {
+    border-bottom: 3px solid #3b82f6;
+    color: #3b82f6;
+    font-weight: 600;
+}
+.drop-zone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+.drop-zone.drag-over {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.05);
+}

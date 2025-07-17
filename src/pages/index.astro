@@ -7,5 +7,583 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-	<Welcome />
+
+
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="bg-blue-500 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-code text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800">JSON比较工具</h1>
+            </div>
+            <div class="flex items-center">
+                <a href="#" class="text-gray-600 hover:text-blue-500 px-3">首页</a>
+                <a href="#" class="text-gray-600 hover:text-blue-500 px-3">使用说明</a>
+                <a href="#" class="text-gray-600 hover:text-blue-500 px-3">API</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">JSON文件比较工具</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                快速比较两个JSON文件或文本，找出相同键值、相同键不同值、多余键和缺失键等差异
+            </p>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- JSON 1 输入 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">JSON 1</h3>
+                    <div class="flex space-x-2">
+                        <button id="clear-json1" class="text-gray-500 hover:text-red-500 transition-colors">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <label class="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors">
+                            <i class="fas fa-upload"></i>
+                            <input type="file" id="file-json1" class="hidden" accept=".json">
+                        </label>
+                    </div>
+                </div>
+                <div id="drop-zone-1" class="drop-zone h-64 mb-4 flex items-center justify-center cursor-pointer">
+                    <div class="text-center p-4">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-500">点击或拖放JSON文件到此处</p>
+                    </div>
+                </div>
+                <textarea id="json-input-1" class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-500" placeholder='粘贴 JSON 内容，例如: { "name": "John", "age": 30 }'></textarea>
+            </div>
+
+            <!-- JSON 2 输入 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">JSON 2</h3>
+                    <div class="flex space-x-2">
+                        <button id="clear-json2" class="text-gray-500 hover:text-red-500 transition-colors">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <label class="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors">
+                            <i class="fas fa-upload"></i>
+                            <input type="file" id="file-json2" class="hidden" accept=".json">
+                        </label>
+                    </div>
+                </div>
+                <div id="drop-zone-2" class="drop-zone h-64 mb-4 flex items-center justify-center cursor-pointer">
+                    <div class="text-center p-4">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-500">点击或拖放JSON文件到此处</p>
+                    </div>
+                </div>
+                <textarea id="json-input-2" class="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-500" placeholder='粘贴 JSON 内容，例如: { "name": "Jane", "age": 28 }'></textarea>
+            </div>
+        </div>
+
+        <!-- 比较按钮 -->
+        <div class="flex justify-center mb-10">
+            <button id="compare-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center">
+                <i class="fas fa-exchange-alt mr-2"></i> 比较 JSON
+            </button>
+        </div>
+
+        <!-- 结果区域 -->
+        <div id="results-section" class="hidden bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-wrap border-b border-gray-200 mb-6">
+                <button data-tab="all" class="result-tab active py-2 px-4 mr-2">所有差异</button>
+                <button data-tab="same" class="result-tab py-2 px-4 mr-2">相同键值</button>
+                <button data-tab="different" class="result-tab py-2 px-4 mr-2">相同键不同值</button>
+                <button data-tab="only1" class="result-tab py-2 px-4 mr-2">仅JSON1有</button>
+                <button data-tab="only2" class="result-tab py-2 px-4 mr-2">仅JSON2有</button>
+            </div>
+
+            <div id="results-container" class="font-mono text-sm">
+                <!-- 结果将通过JavaScript填充 -->
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">如何使用此工具</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-keyboard"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-800">输入方式</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm">
+                        1. 在文本框中直接粘贴JSON内容<br>
+                        2. 点击上传图标选择本地JSON文件<br>
+                        3. 将JSON文件拖放到上传区域
+                    </p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="bg-green-100 text-green-600 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-file-code"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-800">结果说明</h4>
+                    </div>
+                    <p class="text-gray-600 text-sm">
+                        <span class="diff-unchanged px-1">相同键值</span> - 键和值都相同<br>
+                        <span class="diff-changed px-1">相同键不同值</span> - 键相同但值不同<br>
+                        <span class="diff-added px-1">仅JSON1有</span> - 仅第一个JSON中存在的键<br>
+                        <span class="diff-removed px-1">仅JSON2有</span> - 仅第二个JSON中存在的键
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">JSON比较工具</h3>
+                    <p class="text-gray-300 text-sm">
+                        一个免费的在线工具，帮助开发者快速比较和调试JSON数据。
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">相关工具</h3>
+                    <ul class="text-gray-300 text-sm space-y-2">
+                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON格式化工具</a></li>
+                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON验证工具</a></li>
+                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON转XML工具</a></li>
+                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON转CSV工具</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">关于我们</h3>
+                    <p class="text-gray-300 text-sm">
+                        我们致力于为开发者提供简单实用的在线工具。如果您有任何建议或问题，请联系我们。
+                    </p>
+                    <div class="mt-4 flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
+                <p>© 2023 JSON比较工具. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+
 </Layout>
+
+    <script>
+        // DOM元素
+        const jsonInput1 = document.getElementById('json-input-1');
+        const jsonInput2 = document.getElementById('json-input-2');
+        const compareBtn = document.getElementById('compare-btn');
+        const resultsSection = document.getElementById('results-section');
+        const resultsContainer = document.getElementById('results-container');
+        const tabButtons = document.querySelectorAll('.result-tab');
+        const dropZone1 = document.getElementById('drop-zone-1');
+        const dropZone2 = document.getElementById('drop-zone-2');
+        
+        // 当前活动标签
+        let activeTab = 'all';
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置示例JSON
+            jsonInput1.value = JSON.stringify({
+                name: "John Doe",
+                age: 30,
+                email: "john@example.com",
+                isActive: true,
+                roles: ["admin", "user"],
+                address: {
+                    street: "123 Main St",
+                    city: "Anytown",
+                    zip: "12345"
+                },
+                scores: [95, 88, 92]
+            }, null, 2);
+            
+            jsonInput2.value = JSON.stringify({
+                name: "John Doe",
+                age: 32,
+                email: "john.doe@example.com",
+                isActive: false,
+                roles: ["admin", "editor"],
+                address: {
+                    street: "123 Main Street",
+                    city: "Anytown",
+                    state: "CA"
+                },
+                phone: "555-1234"
+            }, null, 2);
+            
+            // 文件上传事件
+            document.getElementById('file-json1').addEventListener('change', function(e) {
+                handleFileUpload(e, jsonInput1);
+            });
+            
+            document.getElementById('file-json2').addEventListener('change', function(e) {
+                handleFileUpload(e, jsonInput2);
+            });
+            
+            // 清除按钮事件
+            document.getElementById('clear-json1').addEventListener('click', function() {
+                jsonInput1.value = '';
+            });
+            
+            document.getElementById('clear-json2').addEventListener('click', function() {
+                jsonInput2.value = '';
+            });
+            
+            // 拖放事件
+            setupDropZone(dropZone1, jsonInput1);
+            setupDropZone(dropZone2, jsonInput2);
+            
+            // 标签切换事件
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    activeTab = this.getAttribute('data-tab');
+                    compareJSONs();
+                });
+            });
+            
+            // 比较按钮事件
+            compareBtn.addEventListener('click', compareJSONs);
+        });
+        
+        // 处理文件上传
+        function handleFileUpload(event, textarea) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const jsonContent = JSON.parse(e.target.result);
+                    textarea.value = JSON.stringify(jsonContent, null, 2);
+                } catch (error) {
+                    alert('无效的JSON文件: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // 设置拖放区域
+        function setupDropZone(dropZone, textarea) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+            
+            dropZone.addEventListener('drop', handleDrop, false);
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            function highlight() {
+                dropZone.classList.add('drag-over');
+            }
+            
+            function unhighlight() {
+                dropZone.classList.remove('drag-over');
+            }
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const file = dt.files[0];
+                
+                if (file && file.type === 'application/json') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const jsonContent = JSON.parse(e.target.result);
+                            textarea.value = JSON.stringify(jsonContent, null, 2);
+                        } catch (error) {
+                            alert('无效的JSON文件: ' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                } else {
+                    alert('请上传JSON文件');
+                }
+            }
+        }
+        
+        // 比较JSON
+        function compareJSONs() {
+            try {
+                const json1 = JSON.parse(jsonInput1.value);
+                const json2 = JSON.parse(jsonInput2.value);
+                
+                // 获取比较结果
+                const comparison = compareObjects(json1, json2);
+                
+                // 显示结果
+                displayResults(comparison);
+                resultsSection.classList.remove('hidden');
+            } catch (error) {
+                alert('JSON解析错误: ' + error.message);
+            }
+        }
+        
+        // 递归比较对象
+        function compareObjects(obj1, obj2, path = '') {
+            const result = {
+                same: {},
+                different: {},
+                only1: {},
+                only2: {}
+            };
+            
+            // 获取所有键
+            const allKeys = new Set([
+                ...Object.keys(obj1),
+                ...Object.keys(obj2)
+            ]);
+            
+            allKeys.forEach(key => {
+                const newPath = path ? `${path}.${key}` : key;
+                const value1 = obj1[key];
+                const value2 = obj2[key];
+                
+                if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+                    if (typeof value1 === 'object' && value1 !== null && 
+                        typeof value2 === 'object' && value2 !== null) {
+                        // 递归比较嵌套对象
+                        const subResult = compareObjects(value1, value2, newPath);
+                        // 合并子结果
+                        Object.assign(result.same, subResult.same);
+                        Object.assign(result.different, subResult.different);
+                        Object.assign(result.only1, subResult.only1);
+                        Object.assign(result.only2, subResult.only2);
+                    } else {
+                        // 比较基本值
+                        if (JSON.stringify(value1) === JSON.stringify(value2)) {
+                            result.same[newPath] = value1;
+                        } else {
+                            result.different[newPath] = { value1, value2 };
+                        }
+                    }
+                } else if (obj1.hasOwnProperty(key)) {
+                    result.only1[newPath] = value1;
+                } else {
+                    result.only2[newPath] = value2;
+                }
+            });
+            
+            return result;
+        }
+        
+        // 显示比较结果
+        function displayResults(comparison) {
+            resultsContainer.innerHTML = '';
+            
+            const fragment = document.createDocumentFragment();
+            
+            // 显示相同键值
+            if (activeTab === 'all' || activeTab === 'same') {
+                const sameHeader = document.createElement('div');
+                sameHeader.className = 'text-lg font-semibold mb-2 text-blue-600';
+                sameHeader.textContent = '相同键值';
+                fragment.appendChild(sameHeader);
+                
+                if (Object.keys(comparison.same).length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-gray-500 italic py-2';
+                    emptyMsg.textContent = '没有相同的键值';
+                    fragment.appendChild(emptyMsg);
+                } else {
+                    for (const [key, value] of Object.entries(comparison.same)) {
+                        const item = createResultItem(key, value, 'same');
+                        fragment.appendChild(item);
+                    }
+                }
+            }
+            
+            // 显示相同键不同值
+            if (activeTab === 'all' || activeTab === 'different') {
+                const diffHeader = document.createElement('div');
+                diffHeader.className = 'text-lg font-semibold mb-2 mt-6 text-orange-500';
+                diffHeader.textContent = '相同键不同值';
+                fragment.appendChild(diffHeader);
+                
+                if (Object.keys(comparison.different).length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-gray-500 italic py-2';
+                    emptyMsg.textContent = '没有相同键不同值的情况';
+                    fragment.appendChild(emptyMsg);
+                } else {
+                    for (const [key, values] of Object.entries(comparison.different)) {
+                        const item = createDiffItem(key, values.value1, values.value2);
+                        fragment.appendChild(item);
+                    }
+                }
+            }
+            
+            // 显示仅JSON1有的键
+            if (activeTab === 'all' || activeTab === 'only1') {
+                const only1Header = document.createElement('div');
+                only1Header.className = 'text-lg font-semibold mb-2 mt-6 text-green-600';
+                only1Header.textContent = '仅JSON1有的键';
+                fragment.appendChild(only1Header);
+                
+                if (Object.keys(comparison.only1).length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-gray-500 italic py-2';
+                    emptyMsg.textContent = 'JSON1没有额外的键';
+                    fragment.appendChild(emptyMsg);
+                } else {
+                    for (const [key, value] of Object.entries(comparison.only1)) {
+                        const item = createResultItem(key, value, 'only1');
+                        fragment.appendChild(item);
+                    }
+                }
+            }
+            
+            // 显示仅JSON2有的键
+            if (activeTab === 'all' || activeTab === 'only2') {
+                const only2Header = document.createElement('div');
+                only2Header.className = 'text-lg font-semibold mb-2 mt-6 text-red-600';
+                only2Header.textContent = '仅JSON2有的键';
+                fragment.appendChild(only2Header);
+                
+                if (Object.keys(comparison.only2).length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'text-gray-500 italic py-2';
+                    emptyMsg.textContent = 'JSON2没有额外的键';
+                    fragment.appendChild(emptyMsg);
+                } else {
+                    for (const [key, value] of Object.entries(comparison.only2)) {
+                        const item = createResultItem(key, value, 'only2');
+                        fragment.appendChild(item);
+                    }
+                }
+            }
+            
+            resultsContainer.appendChild(fragment);
+        }
+        
+        // 创建结果项
+        function createResultItem(key, value, type) {
+            const item = document.createElement('div');
+            let className = 'p-3 mb-2 rounded';
+            
+            switch (type) {
+                case 'same':
+                    className += ' diff-unchanged';
+                    break;
+                case 'only1':
+                    className += ' diff-added';
+                    break;
+                case 'only2':
+                    className += ' diff-removed';
+                    break;
+            }
+            
+            item.className = className;
+            
+            const keySpan = document.createElement('span');
+            keySpan.className = 'json-key mr-2';
+            keySpan.textContent = '"' + key + '"' + ':';
+            
+            const valueSpan = document.createElement('span');
+            valueSpan.className = getValueClassName(value);
+            
+            if (typeof value === 'object' && value !== null) {
+                valueSpan.textContent = JSON.stringify(value);
+            } else {
+                valueSpan.textContent = formatValue(value);
+            }
+            
+            item.appendChild(keySpan);
+            item.appendChild(valueSpan);
+            
+            return item;
+        }
+        
+        // 创建差异项
+        function createDiffItem(key, value1, value2) {
+            const container = document.createElement('div');
+            container.className = 'diff-changed p-3 mb-2 rounded';
+            
+            const keyDiv = document.createElement('div');
+            keyDiv.className = 'json-key mb-1';
+            keyDiv.textContent = '"' + key + '"' + ':';
+            container.appendChild(keyDiv);
+            
+            const valuesDiv = document.createElement('div');
+            valuesDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-2';
+            
+            // 值1
+            const value1Div = document.createElement('div');
+            value1Div.className = 'bg-gray-50 p-2 rounded';
+            
+            const value1Label = document.createElement('span');
+            value1Label.className = 'text-xs text-gray-500 mb-1';
+            value1Label.textContent = ' // JSON 1';
+            
+            const value1Content = document.createElement('span');
+            value1Content.className = getValueClassName(value1);
+            value1Content.textContent = formatValue(value1);
+            value1Div.appendChild(value1Content);
+            value1Div.appendChild(value1Label);
+
+            
+            // 值2
+            const value2Div = document.createElement('div');
+            value2Div.className = 'bg-gray-50 p-2 rounded';
+            
+            const value2Label = document.createElement('span');
+            value2Label.className = 'text-xs text-gray-500 mb-1';
+            value2Label.textContent = ' // JSON 2';
+            
+            const value2Content = document.createElement('span');
+            value2Content.className = getValueClassName(value2);
+            value2Content.textContent = formatValue(value2);
+            value2Div.appendChild(value2Content);
+            value2Div.appendChild(value2Label);
+            
+            valuesDiv.appendChild(value1Div);
+            valuesDiv.appendChild(value2Div);
+            container.appendChild(valuesDiv);
+            
+            return container;
+        }
+        
+        // 获取值对应的CSS类名
+        function getValueClassName(value) {
+            if (typeof value === 'string') return 'json-string';
+            if (typeof value === 'number') return 'json-number';
+            if (typeof value === 'boolean') return 'json-boolean';
+            if (value === null) return 'json-null';
+            return 'json-value';
+        }
+        
+        // 格式化值
+        function formatValue(value) {
+            if (value === null) return 'null';
+            if (typeof value === 'boolean') return value.toString();
+            if (typeof value === 'string') return `"${value}"`;
+            return value;
+        }
+    </script>
