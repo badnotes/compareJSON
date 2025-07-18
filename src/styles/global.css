@@ -5,43 +5,189 @@
     --color-secondary: #10b981;
     --color-dark: #1e293b;
     --color-light: #f8fafc;
+    --color-dark-800: #0f172a;
+    --color-dark-900: #0a0f1f;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+.sun {
+    @apply stroke-zinc-500 transition-all;
+  }
+  .moon {
+    @apply stroke-transparent transition-all;
+  }
+  .dark .sun {
+    @apply stroke-transparent;
+  }
+  .dark .moon {
+    @apply stroke-zinc-400;
+  }
+  #themeToggle:hover .sun {
+    @apply stroke-zinc-800;
+  }
+  #themeToggle:hover .moon {
+    @apply stroke-transparent;
+  }
+  .dark #themeToggle:hover .sun {
+    @apply stroke-transparent;
+  }
+  .dark #themeToggle:hover .moon {
+    @apply stroke-zinc-200;
+  }
+  
+
+/* JSON 语法高亮 */
 .json-key {
     color: #7c3aed;
     font-weight: 600;
 }
+.dark .json-key {
+    color: #a78bfa;
+}
 .json-value {
     color: #0f766e;
+}
+.dark .json-value {
+    color: #5eead4;
 }
 .json-string {
     color: #0f766e;
 }
+.dark .json-string {
+    color: #5eead4;
+}
 .json-number {
     color: #c2410c;
+}
+.dark .json-number {
+    color: #fdba74;
 }
 .json-boolean {
     color: #7e22ce;
 }
+.dark .json-boolean {
+    color: #d8b4fe;
+}
 .json-null {
     color: #9ca3af;
 }
+.dark .json-null {
+    color: #94a3b8;
+}
+
+/* 编辑器行号 */
+.editor-container {
+    position: relative;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.dark .editor-container {
+    border-color: #334155;
+    background-color: #0f172a;
+}
+.line-numbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 40px;
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    text-align: right;
+    padding: 1rem 0.5rem;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+    border-right: 1px solid #e2e8f0;
+}
+.dark .line-numbers {
+    background-color: #1e293b;
+    color: #64748b;
+    border-right-color: #334155;
+}
+
+/* JSON高亮容器 */
+.highlight-container {
+    position: relative;
+    overflow: hidden;
+}
+
+/* 高亮区域 */
+.highlighted-json {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem 1rem 1rem 3.5rem;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre;
+    overflow-wrap: normal;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* 文本输入区 */
+.editor-textarea {
+    position: relative;
+    width: 100%;
+    height: 16rem;
+    padding: 1rem 1rem 1rem 3.5rem;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: transparent;
+    border: none;
+    resize: none;
+    color: transparent;
+    caret-color: #333;
+    z-index: 2;
+    overflow: auto;
+    white-space: pre;
+    overflow-wrap: normal;
+}
+.dark .editor-textarea {
+    caret-color: #fff;
+}
+
+/* 差异高亮 */
 .diff-added {
     background-color: rgba(16, 185, 129, 0.15);
     border-left: 3px solid #10b981;
+}
+.dark .diff-added {
+    background-color: rgba(16, 185, 129, 0.25);
 }
 .diff-removed {
     background-color: rgba(239, 68, 68, 0.15);
     border-left: 3px solid #ef4444;
 }
+.dark .diff-removed {
+    background-color: rgba(239, 68, 68, 0.25);
+}
 .diff-changed {
     background-color: rgba(245, 158, 11, 0.15);
     border-left: 3px solid #f59e0b;
+}
+.dark .diff-changed {
+    background-color: rgba(245, 158, 11, 0.25);
 }
 .diff-unchanged {
     background-color: rgba(59, 130, 246, 0.1);
     border-left: 3px solid #3b82f6;
 }
+.dark .diff-unchanged {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* 标签样式 */
 .result-tab {
     transition: all 0.3s ease;
 }
@@ -50,12 +196,105 @@
     color: #3b82f6;
     font-weight: 600;
 }
+.dark .result-tab.active {
+    border-bottom: 3px solid #60a5fa;
+    color: #60a5fa;
+}
+
+/* 拖放区域 */
 .drop-zone {
     border: 2px dashed #cbd5e1;
     border-radius: 0.5rem;
     transition: all 0.3s ease;
 }
+.dark .drop-zone {
+    border-color: #475569;
+}
 .drop-zone.drag-over {
     border-color: #3b82f6;
     background-color: rgba(59, 130, 246, 0.05);
+}
+.dark .drop-zone.drag-over {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* 编辑器行号 */
+.editor-container {
+    position: relative;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.dark .editor-container {
+    border-color: #334155;
+    background-color: #0f172a;
+}
+.line-numbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 40px;
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    text-align: right;
+    padding: 1rem 0.5rem;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+    border-right: 1px solid #e2e8f0;
+}
+.dark .line-numbers {
+    background-color: #1e293b;
+    color: #64748b;
+    border-right-color: #334155;
+}
+.editor-textarea {
+    width: 100%;
+    height: 20rem;
+    padding: 1rem 1rem 1rem 3.5rem;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    border: none;
+    resize: none;
+    background-color: transparent;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+}
+.dark .editor-textarea {
+    color: #e2e8f0;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+.dark ::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* 过渡效果 */
+body, .editor-container, .line-numbers, .editor-textarea, 
+.diff-added, .diff-removed, .diff-changed, .diff-unchanged {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
