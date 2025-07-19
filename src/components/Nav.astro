@@ -21,13 +21,13 @@ function isActivePath(currentPath: string): boolean {
 <nav class="bg-white dark:bg-slate-800 shadow-md">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <div class="flex items-center">
-            <div class="w-16 h-8 rounded-lg flex items-center justify-center mr-3">
+            <div class="w-16 h-8 rounded-lg flex items-center justify-center mr-1 sm:mr-3">
                 <img src="/icon/logo.svg" alt="logo" />
             </div>
-            <a href={translatePath("/")}><h1 class="text-2xl font-bold">{t("nav.title")}</h1></a>
+            <a href={translatePath("/")}><h1 class="text-base sm:text-2xl font-bold">{t("nav.title")}</h1></a>
         </div>
         <div class="flex items-center space-x-2">
-            <a href={translatePath("/#how-to")} class="text-gray-600 hover:text-blue-500 px-1 text-xl dark:text-gray-300">{t("nav.how")}</a>
+            <a href={translatePath("/#how-to")} class="hidden sm:inline-block text-gray-600 hover:text-blue-500 px-1 text-xl dark:text-gray-300">{t("nav.how")}</a>
             <!-- Language Selector -->
             <div class="language-selector">
                 <button class="language-toggle">
