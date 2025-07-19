@@ -55,7 +55,7 @@ function isActivePath(currentPath: string): boolean {
                 <div class="line-numbers" id="line-numbers-1">1</div>
                 <div class="highlight-container">
                     <div id="highlighted-json-1" class="highlighted-json"></div>
-                    <textarea id="json-input-1" class="editor-textarea" placeholder='粘贴 JSON 内容，例如: { "name": "John", "age": 30 }'></textarea>
+                    <textarea id="json-input-1" class="editor-textarea" placeholder='Paste the JSON content, for example: { "name": "John", "age": 30 }'></textarea>
                 </div>
                 
                 <div class="flex justify-between items-center mb-1">
@@ -81,7 +81,7 @@ function isActivePath(currentPath: string): boolean {
                 <div class="line-numbers" id="line-numbers-2">1</div>
                 <div class="highlight-container">
                     <div id="highlighted-json-2" class="highlighted-json"></div>
-                    <textarea id="json-input-2" class="editor-textarea" placeholder='粘贴 JSON 内容，例如: { "name": "Jane", "age": 28 }'></textarea>
+                    <textarea id="json-input-2" class="editor-textarea" placeholder='Paste the JSON content, for example: { "name": "Jane", "age": 28 }'></textarea>
                 </div>
                 <div class="flex justify-between items-center mb-1">
                     <div class="text-lg font-semibold text-gray-500 absolute right-24 top-2 z-10 bg-rose-600/2 rounded-sm py-1.5 px-2 pointer-events-none select-none">JSON 2</div>
@@ -306,7 +306,7 @@ function isActivePath(currentPath: string): boolean {
     
     
     // 更新行号
-    function updateLineNumbers(textarea, lineNumbers) {
+    function updateLineNumbers(textarea: HTMLTextAreaElement, lineNumbers: HTMLElement) {
         const lines = textarea.value.split('\n').length;
         let numbers = '';
         
@@ -318,7 +318,7 @@ function isActivePath(currentPath: string): boolean {
     }
     
     // 处理文件上传
-    function handleFileUpload(event, textarea, lineNumbers) {
+    function handleFileUpload(event: Event, textarea: HTMLTextAreaElement, lineNumbers: HTMLElement) {
         const file = event.target.files[0];
         if (!file) return;
         
@@ -330,7 +330,7 @@ function isActivePath(currentPath: string): boolean {
                 highlightJSON(jsonInput1.value, highlightedJson1);
                 highlightJSON(jsonInput2.value, highlightedJson2);
                 updateLineNumbers(textarea, lineNumbers);
-            } catch (error) {
+            } catch (error: Error) {
                 alert('无效的JSON文件: ' + error.message);
             }
         };
@@ -338,7 +338,7 @@ function isActivePath(currentPath: string): boolean {
     }
     
     // 设置拖放区域
-    function setupDropZone(dropZone, textarea, lineNumbers) {
+    function setupDropZone(dropZone: HTMLElement, textarea: HTMLTextAreaElement, lineNumbers: HTMLElement) {
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
         });
@@ -409,7 +409,7 @@ function isActivePath(currentPath: string): boolean {
     }
     
     // 递归比较对象
-    function compareObjects(obj1, obj2, path = '') {
+    function compareObjects(obj1: any, obj2: any, path: string = '') {
         const result = {
             same: {},
             different: {},
@@ -604,7 +604,7 @@ function isActivePath(currentPath: string): boolean {
         
         const value1Label = document.createElement('span');
         value1Label.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
-        value1Label.textContent = ' # JSON1 值';
+        value1Label.textContent = ' # JSON1 value';
         
         const value1Content = document.createElement('span');
         value1Content.className = getValueClassName(value1);
@@ -618,7 +618,7 @@ function isActivePath(currentPath: string): boolean {
         
         const value2Label = document.createElement('span');
         value2Label.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
-        value2Label.textContent =  ' #JSON2 值';
+        value2Label.textContent =  ' #JSON2 value';
         
         const value2Content = document.createElement('span');
         value2Content.className = getValueClassName(value2);
