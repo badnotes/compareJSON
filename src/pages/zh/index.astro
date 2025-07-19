@@ -1,0 +1,129 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Home from '../../components/Home.astro';
+
+---
+
+<Layout>
+    <Home />
+    <div class="container mx-auto px-4 py-8">
+        <!-- 使用说明 -->
+        <section id="how-to" class="bg-white dark:bg-slate-800">
+            <h3><i class="fa-solid fa-question"></i>使用说明 CompareJSON</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+                <div class="bg-gray-50 dark:bg-slate-700 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-300 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-keyboard"></i>
+                        </div>
+                        <h4 class="text-xl font-medium">数据的输入方式有哪些？</h4>
+                    </div>
+                    <!-- <p class="text-gray-600 dark:text-gray-300 text-sm space-y-2 pl-3">
+                        {t("explain.input.desc1")} </br>
+                        {t("explain.input.desc2")} </br>
+                        {t("explain.input.desc3")} </br>
+                    </p> -->
+                    <ul>
+                        <li>1. 在文本框中直接粘贴JSON内容</li>
+                        <li>2. 点击上传图标选择本地JSON文件</li>
+                        <li>3. 将JSON文件拖放到上传区域</li>
+                    </ul>
+
+                </div>
+                <div class="bg-gray-50 dark:bg-slate-700 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-file-code"></i>
+                        </div>
+                        <h4 class="text-xl font-medium">JSON比较的结果是什么意思？</h4>
+                    </div>
+                    <!-- <p class="text-gray-600 dark:text-gray-300 text-sm space-y-2 pl-3">
+                        <span class="diff-unchanged px-1">{t("explain.output.cd1")}</span> - {t("explain.output.name1")}<br>
+                        <span class="diff-changed px-1">{t("explain.output.cd2")}</span> - {t("explain.output.name2")}<br>
+                        <span class="diff-added px-1">{t("explain.output.cd3")}</span> - {t("explain.output.name3")}<br>
+                        <span class="diff-removed px-1">{t("explain.output.cd4")}</span> - {t("explain.output.name4")}
+                    </p> -->
+                    <ul>
+                        <li><span class="diff-unchanged px-1">相同键值</span> - 两个JSON内容的键和值都相同的数据</li>
+                        <li><span class="diff-changed px-1">相同键不同值</span> - 两个JSON内容的键相同但值不同的数据</li>
+                        <li><span class="diff-added px-1">仅JSON1有</span> - 仅第一个JSON中存在的键</li>
+                        <li><span class="diff-removed px-1">仅JSON2有</span> - 仅第二个JSON中存在的键</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="terms bg-white dark:bg-slate-800">
+            <h3><i class="fas fa-gavel"></i> 服务条款</h3>
+            
+            <h4>1. 服务描述</h4>
+            <p>本JSON比较工具提供在线的JSON数据比较服务，允许用户输入JSON数据进行对比分析。</p>
+            
+            <h4>2. 用户义务</h4>
+            <p>您同意仅将本服务用于合法目的，且不尝试破坏服务的安全性、稳定性或可用性。</p>
+            
+            <h4>3. 数据隐私与安全</h4>
+            <p>我们重视您的数据安全：</p>
+            <ul>
+                <li><strong>不上传数据</strong>：所有JSON数据的比较处理都在您的浏览器中完成，您的数据永远不会离开您的设备</li>
+                <li><strong>无服务器存储</strong>：我们不会在服务器上存储您输入的任何JSON数据</li>
+                <li><strong>无数据收集</strong>：我们不会收集、出售或共享您的任何个人数据或JSON内容</li>
+            </ul>
+            
+            <div class="highlight">
+                <i class="fas fa-shield-alt"></i> 重要提示：由于所有数据处理都在本地浏览器中进行，关闭浏览器窗口后所有输入数据将永久消失。
+            </div>
+            
+            <h4>4. 免责声明</h4>
+            <p>本服务按"原样"提供，不作任何明示或暗示的保证。对于因使用本服务而导致的任何损失或损害，我们不承担责任。</p>
+        </section>
+        
+        <section class="privacy bg-white dark:bg-slate-800">
+            <h3><i class="fas fa-user-shield"></i> 隐私政策</h3>
+            
+            <h4>1. 我们收集的信息</h4>
+            <p>我们致力于最小化数据收集：</p>
+            <ul>
+                <li><strong>不收集个人身份信息</strong>：我们不需要也不收集您的姓名、邮箱、地址等个人信息</li>
+                <li><strong>不收集JSON内容</strong>：您输入用于比较的JSON数据不会离开您的浏览器</li>
+                <li><strong>基本使用数据</strong>：我们仅收集匿名化的使用统计信息以改进服务</li>
+            </ul>
+            
+            <h4>2. Cookie的使用</h4>
+            <p>我们使用Cookie来增强您的用户体验：</p>
+            <ul>
+                <li><strong>功能Cookie</strong>：保存您的偏好设置（如主题选择、布局偏好）</li>
+                <li><strong>分析Cookie</strong>：收集匿名使用数据以了解用户如何与我们的服务互动</li>
+                <li><strong>会话Cookie</strong>：维持您的登录状态（如适用）和会话信息</li>
+            </ul>
+            
+            <div class="highlight">
+                <i class="fas fa-cookie-bite"></i> 您可以随时通过浏览器设置管理或禁用Cookie，但这可能会影响某些服务功能。
+            </div>
+            
+            <h4>3. 第三方服务</h4>
+            <p>我们可能使用第三方分析服务（如Google Analytics）收集匿名使用数据。这些服务使用Cookie但不收集个人身份信息。</p>
+            
+            <h4>4. 政策变更</h4>
+            <p>我们保留随时更新本隐私政策的权利。重大变更将在网站上发布通知。</p>
+        </section>
+        
+        <div class="data-usage dark:text-zinc-700">
+            <div class="card blue">
+                <i class="fas fa-ban"></i>
+                <h4>我们不会收集</h4>
+                <p>您的JSON数据</p>
+                <p>个人身份信息</p>
+                <p>敏感个人信息</p>
+            </div>
+            
+            <div class="card green">
+                <i class="fas fa-check-circle"></i>
+                <h4>我们仅使用</h4>
+                <p>功能Cookie（偏好设置）</p>
+                <p>分析Cookie（匿名数据）</p>
+                <p>会话Cookie（登录状态）</p>
+            </div>
+        </div>
+    </div>
+</Layout>

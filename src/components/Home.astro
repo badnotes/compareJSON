@@ -1,0 +1,741 @@
+---
+import { getLangFromUrl, useTranslations, useTranslatedPath } from '../i18n/utils';
+import { languages } from '../i18n/ui';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+const path = Astro.url.pathname;
+const noLangPath = path.replace(`/${lang}`, "");
+
+// Determine current path
+function isActivePath(currentPath: string): boolean {
+	return noLangPath === currentPath || noLangPath === `${currentPath}/` || noLangPath.startsWith(currentPath) && currentPath !== "/"
+}
+
+---
+
+<!-- 主内容区 -->
+<main class="container mx-auto px-4 py-8 flex-grow">
+    <div class="text-left ml-2 mb-6">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">{t("hero.title")}</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+            {t("hero.desc")}
+        </p>
+    </div>
+
+    <!-- 输入区域 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- JSON 1 输入 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-3">
+            <div id="drop-zone-1" class="drop-zone relative h-32 mb-2 flex items-center justify-center cursor-pointer">
+                <input type="file" id="drop-file-json1" class="hidden" accept=".json">
+                <div class="text-center p-4">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-500 dark:text-gray-400" set:html={t("tool.file1")}></p>
+                </div>
+            </div>
+            <div class="editor-container relative mb-0">
+                
+                <div class="line-numbers" id="line-numbers-1">1</div>
+                <div class="highlight-container">
+                    <div id="highlighted-json-1" class="highlighted-json"></div>
+                    <textarea id="json-input-1" class="editor-textarea" placeholder='粘贴 JSON 内容，例如: { "name": "John", "age": 30 }'></textarea>
+                </div>
+                
+                <div class="flex justify-between items-center mb-1">
+                    <div class="text-lg font-semibold text-gray-500 absolute right-24 top-2 z-10 bg-green-600/2 rounded-sm py-1.5 px-2 pointer-events-none select-none">JSON 1</div>
+                    <button id="clear-json1" class="text-gray-700 hover:text-red-500 transition-colors absolute right-4 top-2 z-10  bg-green-600/10 rounded-sm py-2 px-7 select-none cursor-pointer">
+                        <i class="fas fa-trash text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON 2 输入 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-3">
+            <div id="drop-zone-2" class="drop-zone relative h-32 mb-2 flex items-center justify-center cursor-pointer">
+                <input type="file" id="drop-file-json2" class="hidden" accept=".json">
+                <div class="text-center p-4">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-500 dark:text-gray-400" set:html={t("tool.file2")}></p>
+                </div>
+                
+            </div>
+            <div class="editor-container relative mb-0">
+                <div class="line-numbers" id="line-numbers-2">1</div>
+                <div class="highlight-container">
+                    <div id="highlighted-json-2" class="highlighted-json"></div>
+                    <textarea id="json-input-2" class="editor-textarea" placeholder='粘贴 JSON 内容，例如: { "name": "Jane", "age": 28 }'></textarea>
+                </div>
+                <div class="flex justify-between items-center mb-1">
+                    <div class="text-lg font-semibold text-gray-500 absolute right-24 top-2 z-10 bg-rose-600/2 rounded-sm py-1.5 px-2 pointer-events-none select-none">JSON 2</div>
+                    <button id="clear-json2" class="text-gray-700 hover:text-red-500 transition-colors absolute right-4 top-2 z-10  bg-rose-500/10 rounded-sm py-2 px-7 select-none cursor-pointer">
+                        <i class="fas fa-trash text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 比较按钮 -->
+    <div class="flex justify-center mb-10">
+        <button id="compare-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center cursor-pointer">
+            <i class="fas fa-exchange-alt mr-2"></i> {t("tool.compare")}
+        </button>
+    </div>
+
+    <!-- 结果区域 -->
+    <div id="results-section" class="hidden bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 mb-8">
+        <div class="flex flex-wrap justify-between items-center mb-6">
+            <div class="flex flex-wrap border-b border-gray-200 dark:border-slate-700 mb-4 lg:mb-0">
+                <button data-tab="all" class="result-tab active py-2 px-4 mr-2">{t("result.all")}</button>
+                <button data-tab="same" class="result-tab py-2 px-4 mr-2">{t("result.same")}</button>
+                <button data-tab="different" class="result-tab py-2 px-4 mr-2">{t("result.different")}</button>
+                <button data-tab="only1" class="result-tab py-2 px-4 mr-2">{t("result.only1")}</button>
+                <button data-tab="only2" class="result-tab py-2 px-4 mr-2">{t("result.only2")}</button>
+            </div>
+            <button id="copy-results" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm flex items-center">
+                <i class="fas fa-copy mr-2"></i> {t("result.copy")}
+            </button>
+        </div>
+
+        <div id="results-container" class="font-mono text-sm">
+            <!-- 结果将通过JavaScript填充 -->
+        </div>
+    </div>
+
+    
+
+</main>
+
+
+<script>
+    const i18nCfg = {
+        "en": {
+            "result.all": "All differences",
+            "result.same": "Same key value",
+            "result.different": "Same key but different value",
+            "result.only1": "Only JSON1",
+            "result.only2": "Only JSON2",
+        },
+        "zh": {
+            "result.all": "所有差异",
+            "result.same": "相同键值",
+            "result.different": "相同键不同值",
+            "result.only1": "仅JSON1有",
+            "result.only2": "仅JSON2有",
+        }
+    }
+    // DOM元素
+    const jsonInput1 = document.getElementById('json-input-1');
+    const jsonInput2 = document.getElementById('json-input-2');
+    const highlightedJson1 = document.getElementById('highlighted-json-1');
+    const highlightedJson2 = document.getElementById('highlighted-json-2');
+    const lineNumbers1 = document.getElementById('line-numbers-1');
+    const lineNumbers2 = document.getElementById('line-numbers-2');
+    const compareBtn = document.getElementById('compare-btn');
+    const resultsSection = document.getElementById('results-section');
+    const resultsContainer = document.getElementById('results-container');
+    const tabButtons = document.querySelectorAll('.result-tab');
+    const dropZone1 = document.getElementById('drop-zone-1');
+    const dropZone2 = document.getElementById('drop-zone-2');
+    const dropFileInput1 = document.getElementById('drop-file-json1');
+    const dropFileInput2 = document.getElementById('drop-file-json2');
+    const copyResultsBtn = document.getElementById('copy-results');
+
+    // 当前活动标签
+    let activeTab = 'all';
+    // 存储比较结果
+    let currentComparison: any = null;
+    
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+        const htmlLang = document.documentElement.lang;
+
+        // 设置示例JSON
+        const json1 = {
+            name: "John Doe",
+            age: 30,
+            email: "john@example.com",
+            isActive: true,
+            roles: ["admin", "user"],
+            address: {
+                street: "123 Main St",
+                city: "Anytown",
+                zip: "12345"
+            },
+            scores: [95, 88, 92]
+        };
+        
+        const json2 = {
+            name: "John Doe",
+            age: 32,
+            email: "john.doe@example.com",
+            isActive: false,
+            roles: ["admin", "editor"],
+            address: {
+                street: "123 Main Street",
+                city: "Anytown",
+                state: "CA"
+            },
+            phone: "555-1234"
+        };
+        
+        jsonInput1.value = JSON.stringify(json1, null, 2);
+        jsonInput2.value = JSON.stringify(json2, null, 2);
+        
+        // 初始化行号
+        updateLineNumbers(jsonInput1, lineNumbers1);
+        updateLineNumbers(jsonInput2, lineNumbers2);
+
+        // 初始高亮
+        highlightJSON(jsonInput1.value, highlightedJson1);
+        highlightJSON(jsonInput2.value, highlightedJson2);
+        
+        dropZone1?.addEventListener('click', function(e) {
+            // 避免点击 input 自己时重复触发
+            if (e.target.tagName.toLowerCase() !== 'input') {
+                dropFileInput1.click();
+            }
+        });
+        // 监听文件选择
+        dropFileInput1?.addEventListener('change', function(e) {
+            handleFileUpload(e, jsonInput1, lineNumbers1);
+        });
+                    
+        dropZone2?.addEventListener('click', function(e) {
+            // 避免点击 input 自己时重复触发
+            if (e.target.tagName.toLowerCase() !== 'input') {
+                dropFileInput2.click();
+            }
+        });
+        // 监听文件选择
+        dropFileInput2?.addEventListener('change', function(e) {
+            handleFileUpload(e, jsonInput2, lineNumbers2);
+        });
+        
+        // 清除按钮事件
+        document.getElementById('clear-json1')?.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡到 drop-zone-1
+            jsonInput1.value = '';
+            highlightJSON(jsonInput1.value, highlightedJson1);
+            updateLineNumbers(jsonInput1, lineNumbers1);
+        });
+        
+        document.getElementById('clear-json2')?.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡到 drop-zone-1
+            jsonInput2.value = '';
+            highlightJSON(jsonInput2.value, highlightedJson2);
+            updateLineNumbers(jsonInput2, lineNumbers2);
+        });
+        
+        // 输入事件监听
+        jsonInput1?.addEventListener('input', function() {
+            // jsonInput1.value = JSON.stringify(jsonInput1.value, null, 2);
+            highlightJSON(jsonInput1.value, highlightedJson1);
+            updateLineNumbers(jsonInput1, lineNumbers1);
+        });
+        
+        jsonInput2?.addEventListener('input', function() {
+            highlightJSON(jsonInput2.value, highlightedJson2);
+            updateLineNumbers(jsonInput2, lineNumbers2);
+        });
+
+        // 双击全选功能
+        jsonInput1?.addEventListener('dblclick', function() {
+            jsonInput1.select();
+        });
+        jsonInput2?.addEventListener('dblclick', function() {
+            jsonInput2.select();
+        });
+
+        // 滚动监听
+        jsonInput1?.addEventListener('scroll', function() {
+            lineNumbers1.scrollTop = jsonInput1.scrollTop;
+            highlightedJson1.scrollTop = jsonInput1.scrollTop;
+            highlightedJson1.scrollLeft = jsonInput1.scrollLeft;
+        });
+        jsonInput2?.addEventListener('scroll', function() {
+            lineNumbers2.scrollTop = jsonInput2.scrollTop;
+            highlightedJson2.scrollTop = jsonInput2.scrollTop;
+            highlightedJson2.scrollLeft = jsonInput2.scrollLeft;
+        });
+        
+        // 拖放事件
+        setupDropZone(dropZone1, jsonInput1, lineNumbers1);
+        setupDropZone(dropZone2, jsonInput2, lineNumbers2);
+        
+        // 标签切换事件
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                activeTab = button.getAttribute('data-tab');
+                displayResults(currentComparison, i18nCfg, htmlLang);
+            });
+        });
+        
+        // 比较按钮事件
+        compareBtn?.addEventListener('click',() => compareJSONs(i18nCfg, htmlLang));
+        
+        // 复制结果按钮事件
+        copyResultsBtn?.addEventListener('click', copyResults);
+        
+        // // 主题切换事件
+        // themeToggle?.addEventListener('click', toggleTheme);
+        
+        // // 初始化主题
+        // initTheme();
+    });
+    
+    
+    // 更新行号
+    function updateLineNumbers(textarea, lineNumbers) {
+        const lines = textarea.value.split('\n').length;
+        let numbers = '';
+        
+        for (let i = 1; i <= lines; i++) {
+            numbers += i + '<br>';
+        }
+        
+        lineNumbers.innerHTML = numbers;
+    }
+    
+    // 处理文件上传
+    function handleFileUpload(event, textarea, lineNumbers) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const jsonContent = JSON.parse(e.target.result);
+                textarea.value = JSON.stringify(jsonContent, null, 2);
+                highlightJSON(jsonInput1.value, highlightedJson1);
+                highlightJSON(jsonInput2.value, highlightedJson2);
+                updateLineNumbers(textarea, lineNumbers);
+            } catch (error) {
+                alert('无效的JSON文件: ' + error.message);
+            }
+        };
+        reader.readAsText(file);
+    }
+    
+    // 设置拖放区域
+    function setupDropZone(dropZone, textarea, lineNumbers) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function highlight() {
+            dropZone.classList.add('drag-over');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const jsonContent = JSON.parse(e.target.result);
+                        textarea.value = JSON.stringify(jsonContent, null, 2);
+                        updateLineNumbers(textarea, lineNumbers);
+                    } catch (error) {
+                        alert('无效的JSON文件: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                alert('请上传JSON文件');
+            }
+        }
+    }
+    
+    // 比较JSON
+    function compareJSONs(i18nCfg, htmlLang) {
+        try {
+            const json1 = JSON.parse(jsonInput1.value);
+            const json2 = JSON.parse(jsonInput2.value);
+            
+            // 获取比较结果
+            currentComparison = compareObjects(json1, json2);
+            
+            // 显示结果
+            displayResults(currentComparison, i18nCfg, htmlLang);
+            resultsSection.classList.remove('hidden');
+            
+            // 滚动到结果区域
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (error) {
+            alert('JSON解析错误: ' + error.message);
+        }
+    }
+    
+    // 递归比较对象
+    function compareObjects(obj1, obj2, path = '') {
+        const result = {
+            same: {},
+            different: {},
+            only1: {},
+            only2: {}
+        };
+        
+        // 获取所有键
+        const allKeys = new Set([
+            ...Object.keys(obj1),
+            ...Object.keys(obj2)
+        ]);
+        
+        allKeys.forEach(key => {
+            const newPath = path ? `${path}.${key}` : key;
+            const value1 = obj1[key];
+            const value2 = obj2[key];
+            
+            if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+                if (typeof value1 === 'object' && value1 !== null && 
+                    typeof value2 === 'object' && value2 !== null) {
+                    // 递归比较嵌套对象
+                    const subResult = compareObjects(value1, value2, newPath);
+                    // 合并子结果
+                    Object.assign(result.same, subResult.same);
+                    Object.assign(result.different, subResult.different);
+                    Object.assign(result.only1, subResult.only1);
+                    Object.assign(result.only2, subResult.only2);
+                } else {
+                    // 比较基本值
+                    if (JSON.stringify(value1) === JSON.stringify(value2)) {
+                        result.same[newPath] = value1;
+                    } else {
+                        result.different[newPath] = { value1, value2 };
+                    }
+                }
+            } else if (obj1.hasOwnProperty(key)) {
+                result.only1[newPath] = value1;
+            } else {
+                result.only2[newPath] = value2;
+            }
+        });
+        
+        return result;
+    }
+    
+    // 显示比较结果
+    function displayResults(comparison, i18nCfg, lang) {
+        if (!comparison) return;
+        
+        resultsContainer.innerHTML = '';
+        
+        const fragment = document.createDocumentFragment();
+        
+        // 显示相同键值
+        if (activeTab === 'all' || activeTab === 'same') {
+            const sameHeader = document.createElement('div');
+            sameHeader.className = 'text-lg font-semibold mb-2 text-blue-600 dark:text-blue-400';
+            sameHeader.textContent = i18nCfg[lang]['result.same'];
+            fragment.appendChild(sameHeader);
+            
+            if (Object.keys(comparison.same).length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
+                emptyMsg.textContent = '没有相同的键值';
+                fragment.appendChild(emptyMsg);
+            } else {
+                for (const [key, value] of Object.entries(comparison.same)) {
+                    const item = createResultItem(key, value, 'same');
+                    fragment.appendChild(item);
+                }
+            }
+        }
+        
+        // 显示相同键不同值
+        if (activeTab === 'all' || activeTab === 'different') {
+            const diffHeader = document.createElement('div');
+            diffHeader.className = 'text-lg font-semibold mb-2 mt-6 text-orange-500 dark:text-orange-400';
+            diffHeader.textContent = i18nCfg[lang]['result.different'];
+            fragment.appendChild(diffHeader);
+            
+            if (Object.keys(comparison.different).length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
+                emptyMsg.textContent = '没有相同键不同值的情况';
+                fragment.appendChild(emptyMsg);
+            } else {
+                for (const [key, values] of Object.entries(comparison.different)) {
+                    const item = createDiffItem(key, values.value1, values.value2);
+                    fragment.appendChild(item);
+                }
+            }
+        }
+        
+        // 显示仅JSON1有的键
+        if (activeTab === 'all' || activeTab === 'only1') {
+            const only1Header = document.createElement('div');
+            only1Header.className = 'text-lg font-semibold mb-2 mt-6 text-green-600 dark:text-green-400';
+            only1Header.textContent = i18nCfg[lang]['result.only1'];
+            fragment.appendChild(only1Header);
+            
+            if (Object.keys(comparison.only1).length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
+                emptyMsg.textContent = 'JSON1没有额外的键';
+                fragment.appendChild(emptyMsg);
+            } else {
+                for (const [key, value] of Object.entries(comparison.only1)) {
+                    const item = createResultItem(key, value, 'only1');
+                    fragment.appendChild(item);
+                }
+            }
+        }
+        
+        // 显示仅JSON2有的键
+        if (activeTab === 'all' || activeTab === 'only2') {
+            const only2Header = document.createElement('div');
+            only2Header.className = 'text-lg font-semibold mb-2 mt-6 text-red-600 dark:text-red-400';
+            only2Header.textContent = i18nCfg[lang]['result.only2'];
+            fragment.appendChild(only2Header);
+            
+            if (Object.keys(comparison.only2).length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
+                emptyMsg.textContent = 'JSON2没有额外的键';
+                fragment.appendChild(emptyMsg);
+            } else {
+                for (const [key, value] of Object.entries(comparison.only2)) {
+                    const item = createResultItem(key, value, 'only2');
+                    fragment.appendChild(item);
+                }
+            }
+        }
+        
+        resultsContainer.appendChild(fragment);
+    }
+    
+    // 创建结果项
+    function createResultItem(key, value, type) {
+        const item = document.createElement('div');
+        let className = 'p-3 mb-1 rounded';
+        
+        switch (type) {
+            case 'same':
+                className += ' diff-unchanged';
+                break;
+            case 'only1':
+                className += ' diff-added';
+                break;
+            case 'only2':
+                className += ' diff-removed';
+                break;
+        }
+        
+        item.className = className;
+        
+        const keySpan = document.createElement('span');
+        keySpan.className = 'json-key mr-2';
+        keySpan.textContent = "\"" + key + "\"" + ':';
+        
+        const valueSpan = document.createElement('span');
+        valueSpan.className = getValueClassName(value);
+        
+        if (typeof value === 'object' && value !== null) {
+            valueSpan.textContent = JSON.stringify(value);
+        } else {
+            valueSpan.textContent = formatValue(value);
+        }
+        
+        item.appendChild(keySpan);
+        item.appendChild(valueSpan);
+        
+        return item;
+    }
+    
+    // 创建差异项
+    function createDiffItem(key, value1, value2) {
+        const container = document.createElement('div');
+        container.className = 'diff-changed p-3 mb-1 rounded';
+        
+        const keyDiv = document.createElement('div');
+        keyDiv.className = 'json-key mb-1';
+        keyDiv.textContent = "\"" + key + "\":";
+        container.appendChild(keyDiv);
+        
+        const valuesDiv = document.createElement('div');
+        valuesDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-2';
+        
+        // 值1
+        const value1Div = document.createElement('div');
+        value1Div.className = 'bg-gray-50 dark:bg-slate-700 p-2 rounded';
+        
+        const value1Label = document.createElement('span');
+        value1Label.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
+        value1Label.textContent = ' # JSON1 值';
+        
+        const value1Content = document.createElement('span');
+        value1Content.className = getValueClassName(value1);
+        value1Content.textContent = formatValue(value1);
+        value1Div.appendChild(value1Content);
+        value1Div.appendChild(value1Label);
+        
+        // 值2
+        const value2Div = document.createElement('div');
+        value2Div.className = 'bg-gray-50 dark:bg-slate-700 p-2 rounded';
+        
+        const value2Label = document.createElement('span');
+        value2Label.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
+        value2Label.textContent =  ' #JSON2 值';
+        
+        const value2Content = document.createElement('span');
+        value2Content.className = getValueClassName(value2);
+        value2Content.textContent = formatValue(value2);
+        value2Div.appendChild(value2Content);
+        value2Div.appendChild(value2Label);
+        
+        valuesDiv.appendChild(value1Div);
+        valuesDiv.appendChild(value2Div);
+        container.appendChild(valuesDiv);
+        
+        return container;
+    }
+    
+    // 获取值对应的CSS类名
+    function getValueClassName(value) {
+        if (typeof value === 'string') return 'json-string';
+        if (typeof value === 'number') return 'json-number';
+        if (typeof value === 'boolean') return 'json-boolean';
+        if (value === null) return 'json-null';
+        return 'json-value';
+    }
+    
+    // 格式化值
+    function formatValue(value) {
+        if (value === null) return 'null';
+        if (typeof value === 'boolean') return value.toString();
+        if (typeof value === 'string') return `"${value}"`;
+        return value;
+    }
+    
+    // 复制结果
+    function copyResults() {
+        if (!currentComparison) {
+            alert('没有可复制的结果');
+            return;
+        }
+        
+        let text = '';
+        
+        // 相同键值
+        if (Object.keys(currentComparison.same).length > 0) {
+            text += '===== 相同键值 =====\n';
+            for (const [key, value] of Object.entries(currentComparison.same)) {
+                text += `"${key}": ${JSON.stringify(value)},\n`;
+            }
+            text += '\n';
+        }
+        
+        // 相同键不同值
+        if (Object.keys(currentComparison.different).length > 0) {
+            text += '===== 相同键不同值 =====\n';
+            for (const [key, values] of Object.entries(currentComparison.different)) {
+                text += `"${key}":\n`;
+                text += `  JSON1: ${JSON.stringify(values.value1)},\n`;
+                text += `  JSON2: ${JSON.stringify(values.value2)},\n`;
+            }
+            text += '\n';
+        }
+        
+        // 仅JSON1有的键
+        if (Object.keys(currentComparison.only1).length > 0) {
+            text += '===== 仅JSON1有的键 =====\n';
+            for (const [key, value] of Object.entries(currentComparison.only1)) {
+                text += `"${key}": ${JSON.stringify(value)},\n`;
+            }
+            text += '\n';
+        }
+        
+        // 仅JSON2有的键
+        if (Object.keys(currentComparison.only2).length > 0) {
+            text += '===== 仅JSON2有的键 =====\n';
+            for (const [key, value] of Object.entries(currentComparison.only2)) {
+                text += `"${key}": ${JSON.stringify(value)},\n`;
+            }
+        }
+        
+        // 复制到剪贴板
+        navigator.clipboard.writeText(text).then(() => {
+            // 显示成功提示
+            const originalText = copyResultsBtn.innerHTML;
+            copyResultsBtn.innerHTML = '<i class="fas fa-check mr-2"></i> 已复制';
+            copyResultsBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+            
+            setTimeout(() => {
+                copyResultsBtn.innerHTML = originalText;
+                copyResultsBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+            }, 2000);
+        }).catch(err => {
+            console.error('复制失败:', err);
+            alert('复制失败，请手动复制内容');
+        });
+    }
+
+            // JSON语法高亮函数
+    function highlightJSON(json, container) {
+        try {
+            // 尝试解析JSON
+            const parsed = JSON.parse(json);
+            // const formatted = JSON.stringify(parsed, null, 2);
+            container.innerHTML = syntaxHighlight(json);
+        } catch (e) {
+            // 如果不是有效JSON，直接显示原始文本
+            container.textContent = json;
+        }
+    }
+    
+    // 语法高亮实现
+    function syntaxHighlight(json) {
+        // 转义HTML特殊字符
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+        // 添加语法高亮
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            let cls = 'json-value';
+            
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'json-key';
+                } else {
+                    cls = 'json-string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'json-boolean';
+            } else if (/null/.test(match)) {
+                cls = 'json-null';
+            } else if (!isNaN(parseFloat(match)) && isFinite(match)) {
+                cls = 'json-number';
+            }
+            
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+</script>

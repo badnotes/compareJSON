@@ -1,0 +1,55 @@
+---
+import { getLangFromUrl, useTranslations, useTranslatedPath } from '../i18n/utils';
+import { languages } from '../i18n/ui';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+const path = Astro.url.pathname;
+const noLangPath = path.replace(`/${lang}`, "");
+
+// Determine current path
+function isActivePath(currentPath: string): boolean {
+	return noLangPath === currentPath || noLangPath === `${currentPath}/` || noLangPath.startsWith(currentPath) && currentPath !== "/"
+}
+
+---
+
+<!-- 页脚 -->
+<footer class="bg-gray-800 dark:bg-slate-900 text-white py-8">
+    <div class="container mx-auto px-4 mb-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-30">
+            <div>
+                <h3 class="text-white text-lg font-semibold mb-4">{t("nav.title")}</h3>
+                <p class="text-gray-100 text-sm">
+                    {t("foot.desc")}
+                </p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">{t("foot.toos")}</h3>
+                <ul class="text-gray-300 text-sm space-y-2">
+                    <li><a href="#" class="hover:text-blue-300 transition-colors">{t("foot.format")}</a></li>
+                    <li><a href="#" class="hover:text-blue-300 transition-colors">{t("foot.valid")}</a></li>
+                    <li><a href="#" class="hover:text-blue-300 transition-colors">{t("foot.xml")}</a></li>
+                    <li><a href="#" class="hover:text-blue-300 transition-colors">{t("foot.csv")}</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-4">{t("foot.about")}</h3>
+                <p class="text-gray-300 text-sm">
+                    {t("foot.about.desc")}
+                </p>
+                <div class="mt-4 flex space-x-4">
+                    <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-github"></i></a>
+                    <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 dark:border-slate-800 mt-8 pt-6 text-center text-gray-400 text-sm">
+            <p>{t("foot.copy")}</p>
+        </div>
+    </div>
+</footer>
+

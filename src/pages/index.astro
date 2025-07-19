@@ -1,824 +1,185 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { Code } from 'astro:components';
-
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
+import Home from "../components/Home.astro";
 ---
 
 <Layout>
+  <Home />
 
-
-    <!-- 导航栏 -->
-    <nav class="bg-white dark:bg-slate-800 shadow-md">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <div class="bg-blue-500 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
-                    <i class="fas fa-code text-white"></i>
-                </div>
-                <a href="/"><h1 class="text-2xl font-bold">JSON比较工具</h1></a>
+  <div class="container mx-auto px-4 py-8">
+    <!-- 使用说明 -->
+    <section id="how-to" class="bg-white dark:bg-slate-800">
+      <h3><i class="fa-solid fa-question"></i>How to use CompareJSON</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+        <div class="bg-gray-50 dark:bg-slate-700 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div
+              class="bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-300 w-8 h-8 rounded-full flex items-center justify-center mr-3"
+            >
+              <i class="fas fa-keyboard"></i>
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="#" class="text-gray-600 hover:text-blue-500 px-3 text-xl dark:text-gray-300">使用说明</a>
-                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={1.5} class="h-6 w-6">
-                        <path
-                          class="sun"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                        ></path>
-                        <path
-                          class="moon"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
-                        ></path>
-                      </svg>
-                </button>
-            </div>
+            <h4>
+              What are the methods for inputting data?
+            </h4>
+          </div>
+          <ul>
+            <li>1. Paste the JSON content directly in the text box</li>
+            <li>2. Click the upload icon to select a local JSON file</li>
+            <li>3. Drag and drop the JSON file to the upload area</li>
+          </ul>
         </div>
-    </nav>
-
-    <!-- 主内容区 -->
-    <main class="container mx-auto px-4 py-8 flex-grow">
-        <div class="text-left mb-10">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">JSON文件比较工具</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
-                快速比较两个JSON文件或文本，找出相同键值、相同键不同值、多余键和缺失键等差异
-            </p>
+        <div class="bg-gray-50 dark:bg-slate-700 rounded-lg">
+          <div class="flex items-center mb-2">
+            <div
+              class="bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 w-8 h-8 rounded-full flex items-center justify-center mr-3"
+            >
+              <i class="fas fa-file-code"></i>
+            </div>
+            <h4>
+              What do the results of a JSON comparison mean?
+            </h4>
+          </div>
+          <ul>
+            <li>
+              <span class="diff-unchanged px-1">Same key value</span> - Data with
+              the same key and value in two JSON contents
+            </li>
+            <li>
+              <span class="diff-changed px-1">Same key but different value</span
+              > - Two JSON contents have the same key but different values
+            </li>
+            <li>
+              <span class="diff-added px-1">Only JSON1</span> - Only keys present
+              in the first JSON
+            </li>
+            <li>
+              <span class="diff-removed px-1">Only JSON2</span> - Only keys present
+              in the second JSON
+            </li>
+          </ul>
         </div>
+      </div>
+    </section>
+    <section class="terms bg-white dark:bg-slate-800">
+      <h3><i class="fas fa-gavel"></i> Terms of Service</h3>
 
-        <!-- 输入区域 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <!-- JSON 1 输入 -->
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6">
-                <div id="drop-zone-1" class="drop-zone relative h-48 mb-4 flex items-center justify-center cursor-pointer">
-                    <input type="file" id="drop-file-json1" class="hidden" accept=".json">
-                    <div class="text-center p-4">
-                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                        <p class="text-gray-500 dark:text-gray-400">点击或拖放JSON文件到此处</p>
-                    </div>
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold absolute left-2 -bottom-8 z-10 bg-green-600/60 rounded-sm py-2 px-4 pointer-events-none select-none">JSON 1</h3>
-                        <button id="clear-json1" class="text-gray-700 hover:text-red-500 transition-colors absolute right-4 -bottom-7 z-10  bg-green-600/60 rounded-sm py-2 px-8 select-none cursor-pointer">
-                            <i class="fas fa-trash text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="editor-container">
-                    <div class="line-numbers" id="line-numbers-1">1</div>
-                    <div class="highlight-container">
-                        <div id="highlighted-json-1" class="highlighted-json"></div>
-                        <textarea id="json-input-1" class="editor-textarea" placeholder='粘贴 JSON 内容，例如: { "name": "John", "age": 30 }'></textarea>
-                    </div>
-                </div>
-            </div>
+      <h4>1. Service Description</h4>
+      <p>
+        This JSON comparison tool provides an online JSON data comparison
+        service, allowing users to input JSON data for comparative analysis.
+      </p>
 
-            <!-- JSON 2 输入 -->
-            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6">
-                <div id="drop-zone-2" class="drop-zone relative h-48 mb-4 flex items-center justify-center cursor-pointer">
-                    <input type="file" id="drop-file-json2" class="hidden" accept=".json">
-                    <div class="text-center p-4">
-                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                        <p class="text-gray-500 dark:text-gray-400">点击或拖放JSON文件到此处</p>
-                    </div>
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold absolute left-2 -bottom-8 z-10 bg-rose-500/60 rounded-sm py-2 px-4 pointer-events-none select-none">JSON 2</h3>
-                        <button id="clear-json2" class="text-gray-700 hover:text-red-500 transition-colors absolute right-4 -bottom-7 z-10  bg-rose-500/60 rounded-sm py-2 px-8 select-none cursor-pointer">
-                            <i class="fas fa-trash text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="editor-container">
-                    <div class="line-numbers" id="line-numbers-2">1</div>
-                    <div class="highlight-container">
-                        <div id="highlighted-json-2" class="highlighted-json"></div>
-                        <textarea id="json-input-2" class="editor-textarea" placeholder='粘贴 JSON 内容，例如: { "name": "Jane", "age": 28 }'></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <h4>2. User Obligations</h4>
+      <p>
+        You agree to use this service only for legitimate purposes and not to
+        attempt to undermine the security, stability or availability of the
+        service.
+      </p>
 
-        <!-- 比较按钮 -->
-        <div class="flex justify-center mb-10">
-            <button id="compare-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center">
-                <i class="fas fa-exchange-alt mr-2"></i> 比较 JSON
-            </button>
-        </div>
+      <h4>3. Data Privacy and Security</h4>
+      <p>We value your data security:</p>
+      <ul>
+        <li>
+          <strong>No data upload</strong>: All JSON data comparison processing
+          is done in your browser, and your data will never leave your device
+        </li>
+        <li>
+          <strong>No server storage</strong>: We will not store any JSON data
+          you enter on the server
+        </li>
+        <li>
+          <strong>No data collection</strong>: We will not collect, sell or
+          share any of your personal data or JSON content
+        </li>
+      </ul>
 
-        <!-- 结果区域 -->
-        <div id="results-section" class="hidden bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 mb-8">
-            <div class="flex flex-wrap justify-between items-center mb-6">
-                <div class="flex flex-wrap border-b border-gray-200 dark:border-slate-700 mb-4 lg:mb-0">
-                    <button data-tab="all" class="result-tab active py-2 px-4 mr-2">所有差异</button>
-                    <button data-tab="same" class="result-tab py-2 px-4 mr-2">相同键值</button>
-                    <button data-tab="different" class="result-tab py-2 px-4 mr-2">相同键不同值</button>
-                    <button data-tab="only1" class="result-tab py-2 px-4 mr-2">仅JSON1有</button>
-                    <button data-tab="only2" class="result-tab py-2 px-4 mr-2">仅JSON2有</button>
-                </div>
-                <button id="copy-results" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm flex items-center">
-                    <i class="fas fa-copy mr-2"></i> 复制结果
-                </button>
-            </div>
+      <div class="highlight">
+        <i class="fas fa-shield-alt"></i> Important: Since all data processing is
+        done in the local browser, all input data will disappear permanently after
+        closing the browser window.
+      </div>
 
-            <div id="results-container" class="font-mono text-sm">
-                <!-- 结果将通过JavaScript填充 -->
-            </div>
-        </div>
+      <h4>4. Disclaimer</h4>
+      <p>
+        This service is provided "as is" without any express or implied
+        warranty. We are not responsible for any loss or damage arising from the
+        use of this service.
+      </p>
+    </section>
 
-        <!-- 使用说明 -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6">
-            <h3 class="text-xl font-semibold mb-4">如何使用此工具</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-50 dark:bg-slate-700 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <div class="bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 w-8 h-8 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-keyboard"></i>
-                        </div>
-                        <h4 class="font-medium">输入方式</h4>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm space-y-2 pl-3">
-                        1. 在文本框中直接粘贴JSON内容<br>
-                        2. 点击上传图标选择本地JSON文件<br>
-                        3. 将JSON文件拖放到上传区域<br>
-                    </p>
-                </div>
-                <div class="bg-gray-50 dark:bg-slate-700 p-4 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <div class="bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-300 w-8 h-8 rounded-full flex items-center justify-center mr-3">
-                            <i class="fas fa-file-code"></i>
-                        </div>
-                        <h4 class="font-medium">结果说明</h4>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm space-y-2 pl-3">
-                        <span class="diff-unchanged px-1">相同键值</span> - 键和值都相同<br>
-                        <span class="diff-changed px-1">相同键不同值</span> - 键相同但值不同<br>
-                        <span class="diff-added px-1">仅JSON1有</span> - 仅第一个JSON中存在的键<br>
-                        <span class="diff-removed px-1">仅JSON2有</span> - 仅第二个JSON中存在的键
-                    </p>
-                </div>
-            </div>
-        </div>
-    </main>
+    <section class="privacy bg-white dark:bg-slate-800">
+      <h3><i class="fas fa-user-shield"></i> Privacy Policy</h3>
 
-    <!-- 页脚 -->
-    <footer class="bg-gray-800 dark:bg-slate-900 text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">JSON比较工具</h3>
-                    <p class="text-gray-300 text-sm">
-                        一个免费的在线工具，帮助开发者快速比较和调试JSON数据。
-                    </p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">相关工具</h3>
-                    <ul class="text-gray-300 text-sm space-y-2">
-                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON格式化工具</a></li>
-                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON验证工具</a></li>
-                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON转XML工具</a></li>
-                        <li><a href="#" class="hover:text-blue-300 transition-colors">JSON转CSV工具</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">关于我们</h3>
-                    <p class="text-gray-300 text-sm">
-                        我们致力于为开发者提供简单实用的在线工具。如果您有任何建议或问题，请联系我们。
-                    </p>
-                    <div class="mt-4 flex space-x-4">
-                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-github"></i></a>
-                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 dark:border-slate-800 mt-8 pt-6 text-center text-gray-400 text-sm">
-                <p>© 2023 JSON比较工具. 保留所有权利。</p>
-            </div>
-        </div>
-    </footer>
+      <h4>1. Information we collect</h4>
+      <p>We are committed to minimizing data collection:</p>
+      <ul>
+        <li>
+          <strong>No personal identification information is collected</strong>:
+          We do not need or collect personal information such as your name,
+          email, address, etc.
+        </li>
+        <li>
+          <strong>No JSON content is collected</strong>: The JSON data you enter
+          for comparison will not leave your browser
+        </li>
+        <li>
+          <strong>Basic usage data</strong>: We only collect anonymized usage
+          statistics to improve the service
+        </li>
+      </ul>
 
+      <h4>2. Use of cookies</h4>
+      <p>We use cookies to enhance your user experience:</p>
+      <ul>
+        <li>
+          <strong>Functional cookies</strong>: Save your preferences (such as
+          theme selection, layout preferences)
+        </li>
+        <li>
+          <strong>Analytics Cookies</strong>: Collect anonymous usage data to
+          understand how users interact with our Services
+        </li>
+        <li>
+          <strong>Session Cookies</strong>: Maintain your login status (if
+          applicable) and session information
+        </li>
+      </ul>
 
+      <div class="highlight">
+        <i class="fas fa-cookie-bite"></i> You can manage or disable cookies at any
+        time through your browser settings, but this may affect certain Service features.
+      </div>
+
+      <h4>3. Third-Party Services</h4>
+      <p>
+        We may use third-party analytics services, such as Google Analytics, to
+        collect anonymous usage data. These services use cookies but do not
+        collect personally identifiable information.
+      </p>
+
+      <h4>4. Policy Changes</h4>
+      <p>
+        We reserve the right to update this Privacy Policy at any time.
+        Significant changes will be notified on the Site.
+      </p>
+    </section>
+
+    <div class="data-usage  dark:text-zinc-700">
+      <div class="card blue bg-white dark:bg-slate-800">
+        <i class="fas fa-ban"></i>
+        <h4>We do not collect</h4>
+        <p>Your JSON data</p>
+        <p>Personally identifiable information</p>
+        <p>Sensitive personal information</p>
+      </div>
+
+      <div class="card green bg-white dark:bg-slate-800">
+        <i class="fas fa-check-circle"></i>
+        <h4>We only use</h4>
+        <p>Functional cookies (preferences)</p>
+        <p>Analytical cookies (anonymous data)</p>
+        <p>Session cookies (logged in)</p>
+      </div>
+    </div>
+  </div>
 </Layout>
-
-    <script>
-        // DOM元素
-        const jsonInput1 = document.getElementById('json-input-1');
-        const jsonInput2 = document.getElementById('json-input-2');
-        const highlightedJson1 = document.getElementById('highlighted-json-1');
-        const highlightedJson2 = document.getElementById('highlighted-json-2');
-        const lineNumbers1 = document.getElementById('line-numbers-1');
-        const lineNumbers2 = document.getElementById('line-numbers-2');
-        const compareBtn = document.getElementById('compare-btn');
-        const resultsSection = document.getElementById('results-section');
-        const resultsContainer = document.getElementById('results-container');
-        const tabButtons = document.querySelectorAll('.result-tab');
-        const dropZone1 = document.getElementById('drop-zone-1');
-        const dropZone2 = document.getElementById('drop-zone-2');
-        const dropFileInput1 = document.getElementById('drop-file-json1');
-        const dropFileInput2 = document.getElementById('drop-file-json2');
-        const copyResultsBtn = document.getElementById('copy-results');
-        const themeToggle = document.getElementById('theme-toggle');
-
-        
-        // 当前活动标签
-        let activeTab = 'all';
-        // 存储比较结果
-        let currentComparison: any = null;
-        
-        // 初始化页面
-        document.addEventListener('DOMContentLoaded', function() {
-            // 设置示例JSON
-            const json1 = {
-                name: "John Doe",
-                age: 30,
-                email: "john@example.com",
-                isActive: true,
-                roles: ["admin", "user"],
-                address: {
-                    street: "123 Main St",
-                    city: "Anytown",
-                    zip: "12345"
-                },
-                scores: [95, 88, 92]
-            };
-            
-            const json2 = {
-                name: "John Doe",
-                age: 32,
-                email: "john.doe@example.com",
-                isActive: false,
-                roles: ["admin", "editor"],
-                address: {
-                    street: "123 Main Street",
-                    city: "Anytown",
-                    state: "CA"
-                },
-                phone: "555-1234"
-            };
-            
-            jsonInput1.value = JSON.stringify(json1, null, 2);
-            jsonInput2.value = JSON.stringify(json2, null, 2);
-            
-            // 初始化行号
-            updateLineNumbers(jsonInput1, lineNumbers1);
-            updateLineNumbers(jsonInput2, lineNumbers2);
-
-            // 初始高亮
-            highlightJSON(jsonInput1.value, highlightedJson1);
-            highlightJSON(jsonInput2.value, highlightedJson2);
-            
-            dropZone1?.addEventListener('click', function(e) {
-                // 避免点击 input 自己时重复触发
-                if (e.target.tagName.toLowerCase() !== 'input') {
-                    dropFileInput1.click();
-                }
-            });
-            // 监听文件选择
-            dropFileInput1?.addEventListener('change', function(e) {
-                handleFileUpload(e, jsonInput1, lineNumbers1);
-            });
-                      
-            dropZone2?.addEventListener('click', function(e) {
-                // 避免点击 input 自己时重复触发
-                if (e.target.tagName.toLowerCase() !== 'input') {
-                    dropFileInput2.click();
-                }
-            });
-            // 监听文件选择
-            dropFileInput2?.addEventListener('change', function(e) {
-                handleFileUpload(e, jsonInput2, lineNumbers2);
-            });
-            
-            // 清除按钮事件
-            document.getElementById('clear-json1')?.addEventListener('click', function(e) {
-                e.stopPropagation(); // 阻止事件冒泡到 drop-zone-1
-                jsonInput1.value = '';
-                highlightJSON(jsonInput1.value, highlightedJson1);
-                updateLineNumbers(jsonInput1, lineNumbers1);
-            });
-            
-            document.getElementById('clear-json2')?.addEventListener('click', function(e) {
-                e.stopPropagation(); // 阻止事件冒泡到 drop-zone-1
-                jsonInput2.value = '';
-                highlightJSON(jsonInput2.value, highlightedJson2);
-                updateLineNumbers(jsonInput2, lineNumbers2);
-            });
-            
-            // 输入事件监听
-            jsonInput1?.addEventListener('input', function() {
-                highlightJSON(jsonInput1.value, highlightedJson1);
-                updateLineNumbers(jsonInput1, lineNumbers1);
-            });
-            
-            jsonInput2?.addEventListener('input', function() {
-                highlightJSON(jsonInput2.value, highlightedJson2);
-                updateLineNumbers(jsonInput2, lineNumbers2);
-            });
-
-            // 滚动监听
-            jsonInput1?.addEventListener('scroll', function() {
-                highlightedJson1.scrollTop = jsonInput1.scrollTop;
-                highlightedJson1.scrollLeft = jsonInput1.scrollLeft;
-            });
-            jsonInput2?.addEventListener('scroll', function() {
-                highlightedJson2.scrollTop = jsonInput2.scrollTop;
-                highlightedJson2.scrollLeft = jsonInput2.scrollLeft;
-            });
-            
-            // 拖放事件
-            setupDropZone(dropZone1, jsonInput1, lineNumbers1);
-            setupDropZone(dropZone2, jsonInput2, lineNumbers2);
-            
-            // 标签切换事件
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    activeTab = button.getAttribute('data-tab');
-                    displayResults(currentComparison);
-                });
-            });
-            
-            // 比较按钮事件
-            compareBtn?.addEventListener('click', compareJSONs);
-            
-            // 复制结果按钮事件
-            copyResultsBtn?.addEventListener('click', copyResults);
-            
-            // 主题切换事件
-            themeToggle?.addEventListener('click', toggleTheme);
-            
-            // 初始化主题
-            initTheme();
-        });
-        
-        // 初始化主题
-        function initTheme() {
-            const isDark = localStorage.getItem('theme') === 'dark' || 
-                          (!('theme' in localStorage) && 
-                          window.matchMedia('(prefers-color-scheme: dark)').matches);
-            
-            document.documentElement.classList.toggle('dark', isDark);
-        }
-        
-        // 切换主题
-        function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-
-            // 重新高亮JSON以应用新主题颜色
-            highlightJSON(jsonInput1.value, highlightedJson1);
-            highlightJSON(jsonInput2.value, highlightedJson2);
-        }
-        
-        // 更新行号
-        function updateLineNumbers(textarea, lineNumbers) {
-            const lines = textarea.value.split('\n').length;
-            let numbers = '';
-            
-            for (let i = 1; i <= lines; i++) {
-                numbers += i + '<br>';
-            }
-            
-            lineNumbers.innerHTML = numbers;
-        }
-        
-        // 处理文件上传
-        function handleFileUpload(event, textarea, lineNumbers) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const jsonContent = JSON.parse(e.target.result);
-                    textarea.value = JSON.stringify(jsonContent, null, 2);
-                    highlightJSON(jsonInput1.value, highlightedJson1);
-                    highlightJSON(jsonInput2.value, highlightedJson2);
-                    updateLineNumbers(textarea, lineNumbers);
-                } catch (error) {
-                    alert('无效的JSON文件: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-        
-        // 设置拖放区域
-        function setupDropZone(dropZone, textarea, lineNumbers) {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, unhighlight, false);
-            });
-            
-            dropZone.addEventListener('drop', handleDrop, false);
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            function highlight() {
-                dropZone.classList.add('drag-over');
-            }
-            
-            function unhighlight() {
-                dropZone.classList.remove('drag-over');
-            }
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const file = dt.files[0];
-                
-                if (file && file.type === 'application/json') {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        try {
-                            const jsonContent = JSON.parse(e.target.result);
-                            textarea.value = JSON.stringify(jsonContent, null, 2);
-                            updateLineNumbers(textarea, lineNumbers);
-                        } catch (error) {
-                            alert('无效的JSON文件: ' + error.message);
-                        }
-                    };
-                    reader.readAsText(file);
-                } else {
-                    alert('请上传JSON文件');
-                }
-            }
-        }
-        
-        // 比较JSON
-        function compareJSONs() {
-            try {
-                const json1 = JSON.parse(jsonInput1.value);
-                const json2 = JSON.parse(jsonInput2.value);
-                
-                // 获取比较结果
-                currentComparison = compareObjects(json1, json2);
-                
-                // 显示结果
-                displayResults(currentComparison);
-                resultsSection.classList.remove('hidden');
-                
-                // 滚动到结果区域
-                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } catch (error) {
-                alert('JSON解析错误: ' + error.message);
-            }
-        }
-        
-        // 递归比较对象
-        function compareObjects(obj1, obj2, path = '') {
-            const result = {
-                same: {},
-                different: {},
-                only1: {},
-                only2: {}
-            };
-            
-            // 获取所有键
-            const allKeys = new Set([
-                ...Object.keys(obj1),
-                ...Object.keys(obj2)
-            ]);
-            
-            allKeys.forEach(key => {
-                const newPath = path ? `${path}.${key}` : key;
-                const value1 = obj1[key];
-                const value2 = obj2[key];
-                
-                if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-                    if (typeof value1 === 'object' && value1 !== null && 
-                        typeof value2 === 'object' && value2 !== null) {
-                        // 递归比较嵌套对象
-                        const subResult = compareObjects(value1, value2, newPath);
-                        // 合并子结果
-                        Object.assign(result.same, subResult.same);
-                        Object.assign(result.different, subResult.different);
-                        Object.assign(result.only1, subResult.only1);
-                        Object.assign(result.only2, subResult.only2);
-                    } else {
-                        // 比较基本值
-                        if (JSON.stringify(value1) === JSON.stringify(value2)) {
-                            result.same[newPath] = value1;
-                        } else {
-                            result.different[newPath] = { value1, value2 };
-                        }
-                    }
-                } else if (obj1.hasOwnProperty(key)) {
-                    result.only1[newPath] = value1;
-                } else {
-                    result.only2[newPath] = value2;
-                }
-            });
-            
-            return result;
-        }
-        
-        // 显示比较结果
-        function displayResults(comparison) {
-            if (!comparison) return;
-            
-            resultsContainer.innerHTML = '';
-            
-            const fragment = document.createDocumentFragment();
-            
-            // 显示相同键值
-            if (activeTab === 'all' || activeTab === 'same') {
-                const sameHeader = document.createElement('div');
-                sameHeader.className = 'text-lg font-semibold mb-2 text-blue-600 dark:text-blue-400';
-                sameHeader.textContent = '相同键值';
-                fragment.appendChild(sameHeader);
-                
-                if (Object.keys(comparison.same).length === 0) {
-                    const emptyMsg = document.createElement('div');
-                    emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                    emptyMsg.textContent = '没有相同的键值';
-                    fragment.appendChild(emptyMsg);
-                } else {
-                    for (const [key, value] of Object.entries(comparison.same)) {
-                        const item = createResultItem(key, value, 'same');
-                        fragment.appendChild(item);
-                    }
-                }
-            }
-            
-            // 显示相同键不同值
-            if (activeTab === 'all' || activeTab === 'different') {
-                const diffHeader = document.createElement('div');
-                diffHeader.className = 'text-lg font-semibold mb-2 mt-6 text-orange-500 dark:text-orange-400';
-                diffHeader.textContent = '相同键不同值';
-                fragment.appendChild(diffHeader);
-                
-                if (Object.keys(comparison.different).length === 0) {
-                    const emptyMsg = document.createElement('div');
-                    emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                    emptyMsg.textContent = '没有相同键不同值的情况';
-                    fragment.appendChild(emptyMsg);
-                } else {
-                    for (const [key, values] of Object.entries(comparison.different)) {
-                        const item = createDiffItem(key, values.value1, values.value2);
-                        fragment.appendChild(item);
-                    }
-                }
-            }
-            
-            // 显示仅JSON1有的键
-            if (activeTab === 'all' || activeTab === 'only1') {
-                const only1Header = document.createElement('div');
-                only1Header.className = 'text-lg font-semibold mb-2 mt-6 text-green-600 dark:text-green-400';
-                only1Header.textContent = '仅JSON1有的键';
-                fragment.appendChild(only1Header);
-                
-                if (Object.keys(comparison.only1).length === 0) {
-                    const emptyMsg = document.createElement('div');
-                    emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                    emptyMsg.textContent = 'JSON1没有额外的键';
-                    fragment.appendChild(emptyMsg);
-                } else {
-                    for (const [key, value] of Object.entries(comparison.only1)) {
-                        const item = createResultItem(key, value, 'only1');
-                        fragment.appendChild(item);
-                    }
-                }
-            }
-            
-            // 显示仅JSON2有的键
-            if (activeTab === 'all' || activeTab === 'only2') {
-                const only2Header = document.createElement('div');
-                only2Header.className = 'text-lg font-semibold mb-2 mt-6 text-red-600 dark:text-red-400';
-                only2Header.textContent = '仅JSON2有的键';
-                fragment.appendChild(only2Header);
-                
-                if (Object.keys(comparison.only2).length === 0) {
-                    const emptyMsg = document.createElement('div');
-                    emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                    emptyMsg.textContent = 'JSON2没有额外的键';
-                    fragment.appendChild(emptyMsg);
-                } else {
-                    for (const [key, value] of Object.entries(comparison.only2)) {
-                        const item = createResultItem(key, value, 'only2');
-                        fragment.appendChild(item);
-                    }
-                }
-            }
-            
-            resultsContainer.appendChild(fragment);
-        }
-        
-        // 创建结果项
-        function createResultItem(key, value, type) {
-            const item = document.createElement('div');
-            let className = 'p-3 mb-2 rounded';
-            
-            switch (type) {
-                case 'same':
-                    className += ' diff-unchanged';
-                    break;
-                case 'only1':
-                    className += ' diff-added';
-                    break;
-                case 'only2':
-                    className += ' diff-removed';
-                    break;
-            }
-            
-            item.className = className;
-            
-            const keySpan = document.createElement('span');
-            keySpan.className = 'json-key mr-2';
-            keySpan.textContent = key + ':';
-            
-            const valueSpan = document.createElement('span');
-            valueSpan.className = getValueClassName(value);
-            
-            if (typeof value === 'object' && value !== null) {
-                valueSpan.textContent = JSON.stringify(value);
-            } else {
-                valueSpan.textContent = formatValue(value);
-            }
-            
-            item.appendChild(keySpan);
-            item.appendChild(valueSpan);
-            
-            return item;
-        }
-        
-        // 创建差异项
-        function createDiffItem(key, value1, value2) {
-            const container = document.createElement('div');
-            container.className = 'diff-changed p-3 mb-2 rounded';
-            
-            const keyDiv = document.createElement('div');
-            keyDiv.className = 'json-key mb-1';
-            keyDiv.textContent = key;
-            container.appendChild(keyDiv);
-            
-            const valuesDiv = document.createElement('div');
-            valuesDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-2';
-            
-            // 值1
-            const value1Div = document.createElement('div');
-            value1Div.className = 'bg-gray-50 dark:bg-slate-700 p-2 rounded';
-            
-            const value1Label = document.createElement('div');
-            value1Label.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
-            value1Label.textContent = 'JSON1 值:';
-            value1Div.appendChild(value1Label);
-            
-            const value1Content = document.createElement('div');
-            value1Content.className = getValueClassName(value1);
-            value1Content.textContent = formatValue(value1);
-            value1Div.appendChild(value1Content);
-            
-            // 值2
-            const value2Div = document.createElement('div');
-            value2Div.className = 'bg-gray-50 dark:bg-slate-700 p-2 rounded';
-            
-            const value2Label = document.createElement('div');
-            value2Label.className = 'text-xs text-gray-500 dark:text-gray-400 mb-1';
-            value2Label.textContent = 'JSON2 值:';
-            value2Div.appendChild(value2Label);
-            
-            const value2Content = document.createElement('div');
-            value2Content.className = getValueClassName(value2);
-            value2Content.textContent = formatValue(value2);
-            value2Div.appendChild(value2Content);
-            
-            valuesDiv.appendChild(value1Div);
-            valuesDiv.appendChild(value2Div);
-            container.appendChild(valuesDiv);
-            
-            return container;
-        }
-        
-        // 获取值对应的CSS类名
-        function getValueClassName(value) {
-            if (typeof value === 'string') return 'json-string';
-            if (typeof value === 'number') return 'json-number';
-            if (typeof value === 'boolean') return 'json-boolean';
-            if (value === null) return 'json-null';
-            return 'json-value';
-        }
-        
-        // 格式化值
-        function formatValue(value) {
-            if (value === null) return 'null';
-            if (typeof value === 'boolean') return value.toString();
-            if (typeof value === 'string') return `"${value}"`;
-            return value;
-        }
-        
-        // 复制结果
-        function copyResults() {
-            if (!currentComparison) {
-                alert('没有可复制的结果');
-                return;
-            }
-            
-            let text = '';
-            
-            // 相同键值
-            if (Object.keys(currentComparison.same).length > 0) {
-                text += '===== 相同键值 =====\n';
-                for (const [key, value] of Object.entries(currentComparison.same)) {
-                    text += `${key}: ${JSON.stringify(value)}\n`;
-                }
-                text += '\n';
-            }
-            
-            // 相同键不同值
-            if (Object.keys(currentComparison.different).length > 0) {
-                text += '===== 相同键不同值 =====\n';
-                for (const [key, values] of Object.entries(currentComparison.different)) {
-                    text += `${key}:\n`;
-                    text += `  JSON1: ${JSON.stringify(values.value1)}\n`;
-                    text += `  JSON2: ${JSON.stringify(values.value2)}\n`;
-                }
-                text += '\n';
-            }
-            
-            // 仅JSON1有的键
-            if (Object.keys(currentComparison.only1).length > 0) {
-                text += '===== 仅JSON1有的键 =====\n';
-                for (const [key, value] of Object.entries(currentComparison.only1)) {
-                    text += `${key}: ${JSON.stringify(value)}\n`;
-                }
-                text += '\n';
-            }
-            
-            // 仅JSON2有的键
-            if (Object.keys(currentComparison.only2).length > 0) {
-                text += '===== 仅JSON2有的键 =====\n';
-                for (const [key, value] of Object.entries(currentComparison.only2)) {
-                    text += `${key}: ${JSON.stringify(value)}\n`;
-                }
-            }
-            
-            // 复制到剪贴板
-            navigator.clipboard.writeText(text).then(() => {
-                // 显示成功提示
-                const originalText = copyResultsBtn.innerHTML;
-                copyResultsBtn.innerHTML = '<i class="fas fa-check mr-2"></i> 已复制';
-                copyResultsBtn.classList.add('bg-green-500', 'hover:bg-green-600');
-                
-                setTimeout(() => {
-                    copyResultsBtn.innerHTML = originalText;
-                    copyResultsBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-                }, 2000);
-            }).catch(err => {
-                console.error('复制失败:', err);
-                alert('复制失败，请手动复制内容');
-            });
-        }
-
-             // JSON语法高亮函数
-        function highlightJSON(json, container) {
-            try {
-                // 尝试解析JSON
-                const parsed = JSON.parse(json);
-                const formatted = JSON.stringify(parsed, null, 2);
-                container.innerHTML = syntaxHighlight(formatted);
-            } catch (e) {
-                // 如果不是有效JSON，直接显示原始文本
-                container.textContent = json;
-            }
-        }
-        
-        // 语法高亮实现
-        function syntaxHighlight(json) {
-            // 转义HTML特殊字符
-            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            
-            // 添加语法高亮
-            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                let cls = 'json-value';
-                
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) {
-                        cls = 'json-key';
-                    } else {
-                        cls = 'json-string';
-                    }
-                } else if (/true|false/.test(match)) {
-                    cls = 'json-boolean';
-                } else if (/null/.test(match)) {
-                    cls = 'json-null';
-                } else if (!isNaN(parseFloat(match)) && isFinite(match)) {
-                    cls = 'json-number';
-                }
-                
-                return '<span class="' + cls + '">' + match + '</span>';
-            });
-        }
-    </script>

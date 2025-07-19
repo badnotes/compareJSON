@@ -1,0 +1,154 @@
+---
+import { getLangFromUrl, useTranslations, useTranslatedPath } from '../i18n/utils';
+import { languages } from '../i18n/ui';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+const path = Astro.url.pathname;
+const noLangPath = path.replace(`/${lang}`, "");
+
+// Determine current path
+function isActivePath(currentPath: string): boolean {
+	return noLangPath === currentPath || noLangPath === `${currentPath}/` || noLangPath.startsWith(currentPath) && currentPath !== "/"
+}
+
+---
+
+
+<!-- 导航栏 -->
+<nav class="bg-white dark:bg-slate-800 shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <div class="w-16 h-8 rounded-lg flex items-center justify-center mr-3">
+                <img src="/icon/logo.svg" alt="logo" />
+            </div>
+            <a href={translatePath("/")}><h1 class="text-2xl font-bold">{t("nav.title")}</h1></a>
+        </div>
+        <div class="flex items-center space-x-2">
+            <a href={translatePath("/#how-to")} class="text-gray-600 hover:text-blue-500 px-1 text-xl dark:text-gray-300">{t("nav.how")}</a>
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <button class="language-toggle">
+                     <img src={`/svg/${lang}.svg`} alt="lang" style="width: 24px; height: 18px;" />
+                    <span class="current-language">{languages[lang as keyof typeof languages]}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown">
+                    {
+                        Object.keys(languages).map((key) => {
+                            return <div class={`language-option ${lang == key ? "bg-[#f5f5f5] dark:bg-slate-700" : ""}`} data-lang={key}
+                                onclick=`window.location.href='${key == "en" ? noLangPath : "/" + key + noLangPath}'`>
+                                <img src={`/svg/${key}.svg`} alt="lang" style="width: 24px; height: 18px;" />
+                                <span>{languages[key as keyof typeof languages]}</span>
+                            </div>
+                        })
+                    }
+                </div>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={1.5} class="h-6 w-6">
+                    <path
+                        class="sun"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                    ></path>
+                    <path
+                        class="moon"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+                    ></path>
+                    </svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+
+<script>
+
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Language selector
+        const languageToggle = document.querySelector('.language-toggle');
+        const languageDropdown = document.querySelector('.language-dropdown');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const currentLanguage = document.querySelector('.current-language');
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Toggle language dropdown display
+        languageToggle?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('show');
+        });
+        
+        // Select language
+        languageOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const lang = option.getAttribute('data-lang');
+                
+                // Update current language display
+                currentLanguage.textContent = option.querySelector('span').textContent;
+                
+                // Update selection state
+                languageOptions.forEach(opt => {
+                    const icon = opt.querySelector('i');
+                    if (opt === option) {
+                        icon.classList.add('fa-check');
+                    } else {
+                        icon.classList.remove('fa-check');
+                    }
+                });
+                
+                // In actual application, language files would be loaded here
+                console.log(`Switching language to: ${lang}`);
+                
+                // Close dropdown menu
+                languageDropdown.classList.remove('show');
+            });
+        });
+            // 点击页面其他区域关闭语言下拉菜单
+        document.addEventListener("click", function (e) {
+            if (
+                !languageToggle.contains(e.target) &&
+                !languageDropdown.contains(e.target)
+            ) {
+                languageDropdown.classList.remove("show");
+            }
+        });
+
+                
+        // 主题切换事件
+        themeToggle?.addEventListener('click', toggleTheme);
+        
+        // 初始化主题
+        initTheme();
+
+    });
+
+      
+    // 初始化主题
+    function initTheme() {
+        const isDark = localStorage.getItem('theme') === 'dark' || 
+                        (!('theme' in localStorage) && 
+                        window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        document.documentElement.classList.toggle('dark', isDark);
+    }
+    
+    // 切换主题
+    function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+        // 重新高亮JSON以应用新主题颜色
+        // highlightJSON(jsonInput1.value, highlightedJson1);
+        // highlightJSON(jsonInput2.value, highlightedJson2);
+    }
+
+</script>

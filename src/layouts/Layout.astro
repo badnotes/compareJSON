@@ -1,29 +1,31 @@
 ---
 import "../styles/global.css"
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="一个强大的JSON比较工具，帮助您快速找出两个JSON文件之间的差异。">
-		<meta name="keywords" content="JSON, 比较工具, JSON比较, 差异检测, 开发工具">
-		<title>JSON比较工具 | 快速找出JSON文件差异</title>
+		<title>{t("site.title")}</title>
+		<meta name="description" content={t("site.description")}>
+		<meta name="keywords" content={t("site.keywords")}>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 		
 	</head>
 	<body class="bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-gray-200 flex flex-col min-h-screen">
+		<Nav />
 		<slot />
+		<Footer />
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
