@@ -1,7 +1,7 @@
 export const languages = {
     en: 'English', // 英语
     zh: '中文',     // 中文
-    // ja: '日本語',    // 日语
+    ja: '日本語',    // 日语
     // ko: '한국어',    //  韩语
     // fr: 'Français', // 法语
     // de: 'Deutsch',  // 德语
@@ -97,5 +97,46 @@ export const ui = {
         "foot.about": "关于我们",
         "foot.about.desc": "我们致力于为开发者提供简单实用的在线JSON工具。如果您有任何建议或问题，请联系我们。",
         "foot.copy": "© 2025 JSON比较工具. 保留所有权利。",
+    },
+    "ja": {
+        "site.title": "JSON比較ツール | JSONデータの違いを素早く見つける",
+        "site.keywords": "JSON、比較ツール、JSON比較、差異検出、開発ツール",
+        "site.description": "2つのJSONファイルの違いを素早く見つけられる強力なJSON比較ツールです。同一のキー値、同じキーの異なる値、余分なキー、欠落したキーなどの違いを見つけられます",
+        "nav.title": "CompareJSON",
+        "nav.how": "使い方",
+        "hero.title": "JSONデータ比較ツール",
+        "hero.desc": "2つのJSONファイルまたはテキストファイルを素早く比較し、同一のキー値、同じキーの異なる値、余分なキー、欠落したキーなどの違いを見つけられます。データはブラウザ内にのみ保存され、ネットワークにはアップロードされません",
+        "tool.file1": "<strong>最初のJSON</strong>ファイルをここにクリックまたはドラッグ＆ドロップしてください",
+        "tool.file2": "<strong>2番目のJSON</strong>ファイルをここにクリックまたはドラッグ＆ドロップしてください",
+        "tool.compare": "JSONを比較してください",
+        "result.all": "すべての相違点",
+        "result.same": "同じキーと値",
+        "result.different": "同じキー、異なる値",
+        "result.only1": "JSON1のみ",
+        "result.only2": "JSON2のみ",
+        "result.copy": "結果をコピーしてください",
+        "explain.how": "よくある質問",
+        "explain.input": "データの入力方法は何ですか？",
+        "explain.input.desc1": "1. JSONの内容をテキストボックスに直接貼り付けます",
+        "explain.input.desc2": "2. アップロードアイコンをクリックしてローカルのJSONファイルを選択します",
+        "explain.input.desc3": "3. JSONファイルをアップロードエリアにアップロードしてください",
+        "explain.output": "JSON比較結果の意味は何ですか？",
+        "explain.output.cd1": "同じキーと値",
+        "explain.output.name1": "両方のJSONコンテンツで同じキーと値を持つデータ",
+        "explain.output.cd2": "同じキー、異なる値",
+        "explain.output.name2": "2つのJSONコンテンツで同じキーだが値が異なるデータです",
+        "explain.output.cd3": "JSON1のみ",
+        "explain.output.name3": "最初のJSONにのみ存在するキーです",
+        "explain.output.cd4": "JSON2のみ",
+        "explain.output.name4": "2番目のJSONにのみ存在するキーです",
+        "foot.desc": "開発者がJSONデータを素早く比較・デバッグするのに役立つ無料のオンラインツールです",
+        "foot.toos": "関連ツールです",
+        "foot.format": "JSONフォーマッターです",
+        "foot.valid": "JSON バリデータ",
+        "foot.xml": "JSON から XML へのツール",
+        "foot.csv": "JSON から CSV へのツール",
+        "foot.about": "会社概要",
+        "foot.about.desc": "私たちは、開発者の皆様にシンプルで便利なオンライン JSON ツールを提供することに尽力しています。ご提案やご質問がございましたら、お気軽にお問い合わせください",
+        "foot.copy": "© 2025 JSON Comparison Tool. All rights reserved."
     }
 }

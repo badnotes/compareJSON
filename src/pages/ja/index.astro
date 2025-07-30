@@ -1,0 +1,128 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Home from '../../components/Home.astro';
+
+---
+
+<Layout>
+    <Home />
+    <div class="container mx-auto px-4 py-8">
+        <!-- 使用説明 -->
+<section id="how-to" class="bg-white dark:bg-slate-800">
+<h3><i class="fa-solid fa-question"></i>CompareJSON 使用説明</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+<div class="bg-gray-50 dark:bg-slate-700 rounded-lg">
+<div class="flex items-center mb-2">
+<div class="bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-300 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+<i class="fas fa-keyboard"></i>
+</div>
+<h4 class="text-xl font-medium">データの入力方法にはいくつかありますか?</h4>
+ </div>
+ <!-- <p class="text-gray-600 dark:text-gray-300 text-sm space-y-2 pl-3">
+ {t("explain.input.desc1")} </br>
+ {t("explain.input.desc2")} </br>
+ {t("explain.input.desc3")} </br>
+ </p> -->
+ <ul>
+ <li>1. 文本框中直接貼付JSON内容</li>
+ <li>2. 点击上传图标选择本地JSON文件</li>
+ <li>3. JSON 文を上の传領域に放り出す</li>
+ </ul>
+
+ </div>
+ <div class="bg-gray-50 dark:bg-slate-700rounded-lg">
+ <div class="flex items-center mb-2">
+ <div class="bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-300 w-8 h-8rounded-full flex items-center justify-center mr-3">
+ <i class="fas fa-ファイルコード"></i>
+ </div>
+ <h4 class="text-xl font-medium">JSON 比較の結果は何ですか?</h4>
+ </div>
+ <!-- <p class="text-gray-600 dark:text-gray-300 text-sm space-y-2 pl-3">
+<span class="diff-unchanged px-1">{t("explain.output.cd1")</span> - {t("explain.output.name1")br>
+<span class="diff-changed px-1">{t("explain.output.cd2")</span> - {t("explain.output.name2")br>
+<span class="diff-added px-1">{t("explain.output.cd3")</span> - {t("explain.output.name3")br>
+<span class="diff-removed px-1">{t("explain.output.cd4")</span> - {t("explain.output.name4")}
+</p> -->
+<ul>
+<li><span class="diff-unchanged px-1">同じキー値</span> - 2 つの JSON コンテンツの鍵と価値はすべて同じデータ</li>
+ <li><span class="diff-changed px-1">同じ键異なる値</span> - 2 つの JSON コンテンツの同じであるが異なるデータ</li>
+ <li><span class="diff-added px-1">仅JSON1有</span> - 最初のJSON中に存在する键</li>
+ <li><span class="diff-removed px-1">JSON2 あり</span> - JSON 内に 2 番目に存在するもの</li>
+ </ul>
+ </div>
+ </div>
+ </section>
+
+        <section class="terms bg-white dark:bg-slate-800">
+<h3><i class="fas fa-gavel"></i> 利用規約</h3>
+
+<h4>1. サービスの説明</h4>
+<p>このJSON比較ツールは、オンラインのJSONデータ比較サービスを提供します。ユーザーはJSONデータを入力して比較分析を行うことができます。</p>
+
+<h4>2. ユーザーの義務</h4>
+<p>お客様は、本サービスを合法的な目的にのみ使用し、サービスのセキュリティ、安定性、または可用性を損なう行為を行わないことに同意するものとします。</p>
+
+<h4>3. データのプライバシーとセキュリティ</h4>
+<p>当社はお客様のデータセキュリティを重視しています。</p>
+<ul>
+<li><strong>データのアップロードは不要</strong>：すべてのJSONデータの比較と処理はブラウザ内で行われます。データはデバイス外に一切保存されません。</li>
+<li><strong>サーバーストレージなし</strong>：お客様が入力したJSONデータは、当社のサーバーに保存されません。</li>
+<li><strong>データ収集なし</strong>：お客様の個人データやJSONコンテンツは、収集、販売、共有されません。</li>
+</ul>
+
+<div class="highlight">
+<i class="fas fa-shield-alt"></i> 重要：すべてのデータ処理はブラウザ内でローカルに行われるため、ブラウザウィンドウを閉じると入力されたデータはすべて完全に失われます。
+</div>
+
+<h4>4. 免責事項</h4>
+<p>本サービスは「現状有姿」で提供され、明示的または黙示的を問わず、いかなる種類の保証もいたしません。当社は、本サービスの利用に起因するいかなる損失または損害についても責任を負いません。 </p>
+</section>
+
+<section class="privacy bg-white dark:bg-slate-800">
+<h3><i class="fas fa-user-shield"></i> プライバシーポリシー</h3>
+
+<h4>1. 収集する情報</h4>
+<p>当社はデータ収集を最小限に抑えるよう努めています。</p>
+<ul>
+<li><strong>個人を特定できる情報なし</strong>：氏名、メールアドレス、住所などの個人情報は収集しません。</li>
+<li><strong>JSONコンテンツなし</strong>：比較のために入力されたJSONデータはブラウザから外部に出力されません。</li>
+<li><strong>基本使用状況データ</strong>：当社はサービス向上のため、匿名化された使用状況統計のみを収集します。</li>
+</ul>
+
+<h4>2. Cookie の使用</h4>
+<p>当社は、お客様のユーザーエクスペリエンスを向上させるために Cookie を使用します。</p>
+<ul>
+<li><strong>機能性 Cookie</strong>: お客様の設定（テーマの選択やレイアウトの設定など）を保存します。</li>
+<li><strong>分析 Cookie</strong>: ユーザーが当社のサービスをどのように利用しているかを把握するために、匿名の使用状況データを収集します。</li>
+<li><strong>セッション Cookie</strong>: ログイン状態（該当する場合）とセッション情報を維持します。</li>
+
+<div class="highlight">
+<i class="fas fa-cookie-bite"></i> ブラウザの設定からいつでも Cookie を管理または無効にすることができますが、これにより一部のサービス機能に影響が生じる場合があります。
+</div>
+
+<h4>3. サードパーティのサービス</h4>
+<p>当社は、匿名の使用状況データを収集するために、Google Analytics などのサードパーティの分析サービスを利用する場合があります。これらのサービスは Cookie を使用しますが、個人を特定できる情報は収集しません。</p>
+
+<h4>4.ポリシーの変更</h4>
+<p>当社は、本プライバシーポリシーをいつでも更新する権利を留保します。重要な変更については、本サイト上でお知らせいたします。</p>
+</section>
+        
+        <div class="data-usage dark:text-zinc-700">
+            <div class="card blue">
+            <i class="fas fa-ban"></i>
+            <h4>収集しません</h4>
+            <p>JSONデータ</p>
+            <p>個人を特定できる情報</p>
+            <p>センシティブな個人情報</p>
+            </div>
+
+            <div class="card green">
+            <i class="fas fa-check-circle"></i>
+            <h4>使用するのは</h4>
+            <p>機能Cookie（設定）</p>
+            <p>分析Cookie（匿名データ）</p>
+            <p>セッションCookie（ログイン状態）</p>
+            </div>
+            </div>
+        </div>
+</Layout>
