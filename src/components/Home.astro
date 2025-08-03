@@ -133,6 +133,12 @@ function isActivePath(currentPath: string): boolean {
             "result.different": "Same key but different value",
             "result.only1": "Only JSON1",
             "result.only2": "Only JSON2",
+            "result.fail.same": "No same key value",
+            "result.fail.different": "No same key but different value",
+            "result.fail.only1": "JSON1 has extra keys",
+            "result.fail.only2": "JSON2 has extra keys",
+            "result.copy.none": "No results to copy",
+            "result.copy.success": "Copied",
         },
         "zh": {
             "result.all": "所有差异",
@@ -140,6 +146,25 @@ function isActivePath(currentPath: string): boolean {
             "result.different": "相同键不同值",
             "result.only1": "仅JSON1有",
             "result.only2": "仅JSON2有",
+            "result.fail.same": "没有相同的键值",
+            "result.fail.different": "没有相同键不同值的情况",
+            "result.fail.only1": "JSON1没有额外的键",
+            "result.fail.only2": "JSON2没有额外的键",
+            "result.copy.none": "没有可复制的结果",
+            "result.copy.success": "已复制",
+        },
+        "ja": {
+            "result.all": "すべての違い",
+            "result.same": "同じキー値",
+            "result.different": "同じキーで異なる値",
+            "result.only1": "JSON1のみ",
+            "result.only2": "JSON2のみ",
+            "result.fail.same": "同じキーがありません",
+            "result.fail.different": "同じキーがありますが、異なる値です",
+            "result.fail.only1": "JSON1のみがあります",
+            "result.fail.only2": "JSON2のみがあります",
+            "result.copy.none": "コピーする結果がありません",
+            "result.copy.success": "コピーしました",
         }
     }
     // DOM元素
@@ -295,7 +320,7 @@ function isActivePath(currentPath: string): boolean {
         compareBtn?.addEventListener('click',() => compareJSONs(i18nCfg, htmlLang));
         
         // 复制结果按钮事件
-        copyResultsBtn?.addEventListener('click', copyResults);
+        copyResultsBtn?.addEventListener('click', () => copyResults(i18nCfg, htmlLang));
         
         // // 主题切换事件
         // themeToggle?.addEventListener('click', toggleTheme);
@@ -474,7 +499,7 @@ function isActivePath(currentPath: string): boolean {
             if (Object.keys(comparison.same).length === 0) {
                 const emptyMsg = document.createElement('div');
                 emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                emptyMsg.textContent = '没有相同的键值';
+                emptyMsg.textContent = i18nCfg[lang]['result.fail.same'];
                 fragment.appendChild(emptyMsg);
             } else {
                 for (const [key, value] of Object.entries(comparison.same)) {
@@ -494,7 +519,7 @@ function isActivePath(currentPath: string): boolean {
             if (Object.keys(comparison.different).length === 0) {
                 const emptyMsg = document.createElement('div');
                 emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                emptyMsg.textContent = '没有相同键不同值的情况';
+                emptyMsg.textContent = i18nCfg[lang]['result.fail.different'];
                 fragment.appendChild(emptyMsg);
             } else {
                 for (const [key, values] of Object.entries(comparison.different)) {
@@ -514,7 +539,7 @@ function isActivePath(currentPath: string): boolean {
             if (Object.keys(comparison.only1).length === 0) {
                 const emptyMsg = document.createElement('div');
                 emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                emptyMsg.textContent = 'JSON1没有额外的键';
+                emptyMsg.textContent = i18nCfg[lang]['result.fail.only1'];
                 fragment.appendChild(emptyMsg);
             } else {
                 for (const [key, value] of Object.entries(comparison.only1)) {
@@ -534,7 +559,7 @@ function isActivePath(currentPath: string): boolean {
             if (Object.keys(comparison.only2).length === 0) {
                 const emptyMsg = document.createElement('div');
                 emptyMsg.className = 'text-gray-500 dark:text-gray-400 italic py-2';
-                emptyMsg.textContent = 'JSON2没有额外的键';
+                emptyMsg.textContent = i18nCfg[lang]['result.fail.only2'];
                 fragment.appendChild(emptyMsg);
             } else {
                 for (const [key, value] of Object.entries(comparison.only2)) {
@@ -634,7 +659,7 @@ function isActivePath(currentPath: string): boolean {
     }
     
     // 获取值对应的CSS类名
-    function getValueClassName(value) {
+    function getValueClassName(value: any) {
         if (typeof value === 'string') return 'json-string';
         if (typeof value === 'number') return 'json-number';
         if (typeof value === 'boolean') return 'json-boolean';
@@ -643,7 +668,7 @@ function isActivePath(currentPath: string): boolean {
     }
     
     // 格式化值
-    function formatValue(value) {
+    function formatValue(value: any) {
         if (value === null) return 'null';
         if (typeof value === 'boolean') return value.toString();
         if (typeof value === 'string') return `"${value}"`;
@@ -651,9 +676,9 @@ function isActivePath(currentPath: string): boolean {
     }
     
     // 复制结果
-    function copyResults() {
+    function copyResults(i18nCfg: Record<string, Record<string, string>>, lang: string) {
         if (!currentComparison) {
-            alert('没有可复制的结果');
+            alert(i18nCfg[lang]['result.copy.none']);
             return;
         }
         
@@ -661,7 +686,7 @@ function isActivePath(currentPath: string): boolean {
         
         // 相同键值
         if (Object.keys(currentComparison.same).length > 0) {
-            text += '===== 相同键值 =====\n';
+            text += '===== ' + i18nCfg[lang]['result.same'] + ' =====\n';
             for (const [key, value] of Object.entries(currentComparison.same)) {
                 text += `"${key}": ${JSON.stringify(value)},\n`;
             }
@@ -670,7 +695,7 @@ function isActivePath(currentPath: string): boolean {
         
         // 相同键不同值
         if (Object.keys(currentComparison.different).length > 0) {
-            text += '===== 相同键不同值 =====\n';
+            text += '===== ' + i18nCfg[lang]['result.different'] + ' =====\n';
             for (const [key, values] of Object.entries(currentComparison.different)) {
                 text += `"${key}":\n`;
                 text += `  JSON1: ${JSON.stringify(values.value1)},\n`;
@@ -681,7 +706,7 @@ function isActivePath(currentPath: string): boolean {
         
         // 仅JSON1有的键
         if (Object.keys(currentComparison.only1).length > 0) {
-            text += '===== 仅JSON1有的键 =====\n';
+            text += '===== ' + i18nCfg[lang]['result.only1'] + ' =====\n';
             for (const [key, value] of Object.entries(currentComparison.only1)) {
                 text += `"${key}": ${JSON.stringify(value)},\n`;
             }
@@ -690,7 +715,7 @@ function isActivePath(currentPath: string): boolean {
         
         // 仅JSON2有的键
         if (Object.keys(currentComparison.only2).length > 0) {
-            text += '===== 仅JSON2有的键 =====\n';
+            text += '===== ' + i18nCfg[lang]['result.only2'] + ' =====\n';
             for (const [key, value] of Object.entries(currentComparison.only2)) {
                 text += `"${key}": ${JSON.stringify(value)},\n`;
             }
@@ -700,7 +725,7 @@ function isActivePath(currentPath: string): boolean {
         navigator.clipboard.writeText(text).then(() => {
             // 显示成功提示
             const originalText = copyResultsBtn.innerHTML;
-            copyResultsBtn.innerHTML = '<i class="fas fa-check mr-2"></i> 已复制';
+            copyResultsBtn.innerHTML = '<i class="fas fa-check mr-2"></i> ' + i18nCfg[lang]['result.copy.success'];
             copyResultsBtn.classList.add('bg-green-500', 'hover:bg-green-600');
             
             setTimeout(() => {
