@@ -332,7 +332,9 @@
     overflow-x: auto;
 }
 .dark .editor-textarea {
-    color: #e2e8f0;
+    /* 保持文本透明，只显示高亮层 */
+    color: transparent;
+    caret-color: #fff;
 }
 
 /* 滚动条样式 */
